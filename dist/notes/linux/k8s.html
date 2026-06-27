@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>k8s - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>k8s</h1>
+  <div class="meta"></div>
+  <h2>k8s作用</h2>
+
+<p>解决容器管理痛点</p>
+<p>提升部署效率</p>
+<p>支持多副本部署</p>
+
+<h3><strong>核心作用</strong></h3>
+
+<p>容器调度总管</p>
+<p>自动化配置管理</p>
+<p>支持服务编排</p>
+
+<p>自动部署</p>
+<p>负载均衡</p>
+<p>自动修复</p>
+
+<h3>核心组件</h3>
+
+<p><strong>pod</strong>：容器实际工作的地方 一个pod包含多个容器</p>
+
+<p><strong>Node：</strong>真实服务器 pod运行的物理或虚拟机</p>
+
+<p><strong>Deployment</strong>：定义应用的期望状态</p>
+
+<p><strong>Service</strong>：提供访问Pod的统一入口 实现负载均衡</p>
+
+<p><strong>kube-apiserver</strong>：所有指令通过kube-apiserver进入 是集群控制平面</p>
+
+<p><strong>etcd</strong>：集群当前状态数据库 存储所有集群数据</p>
+
+<p><strong>kube-scheduler</strong>：决定Pod放在哪台机器上运行</p>
+
+<p><strong>kubelet：</strong>负责监听Pod的运行状态 启动容器 上报情况</p>
+
+<p><strong>Namespace：</strong>提供项目隔离 确保不同的项目之间互不干扰</p>
+<hr>---
+
+<h2>本地部署k8s</h2>
+
+<h3>准备工具</h3>
+
+<p>docker</p>
+<p>kubectl</p>
+<p>kind</p>
+
+<h3>安装docker</h3>
+
+<pre><code class="language-shell">yum install docker -y
+
+<p>#启动docker服务</p>
+<p>systemctl start docker</p>
+
+<p>#设置开机自启动 </p>
+<p>systemctl enable docker</p>
+
+<p>#注意 podman不需要手动启动和设置开机自启动 可以替换docker</code></pre></p>
+
+<h3>安装kubectl</h3>
+
+<pre><code class="language-shell">#需要VPN
+<p>curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"</p>
+
+<p>#设置kubectl权限</p>
+<p>chmod +x kubectl </p>
+
+<p>#移动kubectl到系统路径</p>
+<p>mv kubectl /usr/local/bin</p>
+
+<p>#检查kubectl版本 	</p>
+<p>kubectl version --client</p>
+</code></pre>
+
+<h3>安装kind</h3>
+
+<pre><code class="language-shell">#需要VPN
+<p>curl -Lo ./kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64</p>
+
+<p>#设置kind权限</p>
+<p>chmod +x ./kind</p>
+
+<p>#移动kind到系统路径</p>
+<p>mv ./kind /usr/local/bin/kind</p>
+
+<p>#检查kind版本</p>
+<p>kind version</code></pre></p>
+
+<h3>启动k8s集群</h3>
+
+<pre><code class="language-shell">#使用kind创建集群
+<p>kind create cluster</p>
+<p>#几分钟后本地会有单节点的k8s集群</p>
+
+<p>#检查集群状态</p>
+<p>kubectl get nodes</p>
+<p>#返回节点名称 状态 角色 年龄和版本信息</p>
+<p>如：</p>
+<p>NAME                 STATUS   ROLES           AGE   VERSION</p>
+<p>kind-control-plane   Ready    control-plane   71s   v1.34.0</p>
+
+<p>#检查集群组件</p>
+<p>kubectl get pods -A</p>
+<p>#查看各个组件是否正常运行</p>
+</code></pre>
+
+<h3>创建Deployment</h3>
+
+<p>使用kubectl创建Deployment</p>
+
+<pre><code class="language-shell">#拉取某个镜像 如nginx
+<p>podman pull nginx：1.24</p>
+
+<p>#将镜像上传到kind节点</p>
+<p>kind load docker-image nginx:1.24</p>
+
+<p>#写一个yaml文件</p>
+<p>vim yaml文件名</p>
+
+<p>#启动yaml文件</p>
+<p>kubectl apply -f yaml文件名</p>
+
+<p>curl 127.0.0.1:端口号	#通过本地地址访问部署的应用</p>
+<p>#注意编写的yaml文件是否暴露端口号</p>
+<p>ss -nulpt | grep 暴露的端口号</p>
+</code></pre>
+
+<h3>查看Pod启动状态</h3>
+
+<pre><code class="language-shell">#检查Pod启动情况
+<p>kubectl get pods</p>
+
+<p>#获取Pod列表</p>
+<p>kubectl get svc</p>
+<p>#查看服务端口号</p>
+
+<p>#删除集群</p>
+<p>kubectl delete cluster</p>
+
+<p>#使用kind创建集群时指定yaml文件</p>
+<p>kind create cluster --name kind --config yaml文件名</code></pre></p>
+
+<h3>清理环境</h3>
+
+<pre><code class="language-shell">kubectl delete deployment
+<p>#删除deployment</p>
+
+<p>kubectl delete service </p>
+<p>#删除service</p>
+
+<p>kind delete cluster</p>
+<p>#删除集群</p>
+
+<p>#查看集群状态 删除集群后都是error</p>
+<p>kubectl get nodes</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

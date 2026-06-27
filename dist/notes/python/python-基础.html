@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python 基础笔记 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>Python 基础笔记</h1>
+  <div class="meta"></div>
+  <h2>变量与数据类型</h2>
+
+<p>Python 是动态类型语言，变量不需要声明类型：</p>
+
+<pre><code class="language-python">name = "Fujiko"
+<p>age = 22</p>
+<p>pi = 3.14159</p>
+<p>is_student = True</code></pre></p>
+
+<h2>列表与字典</h2>
+
+<pre><code class="language-python"># 列表
+<p>fruits = ["苹果", "香蕉", "橘子"]</p>
+<p>fruits.append("葡萄")</p>
+
+<h1>字典</h1>
+<p>person = {</p>
+    "name": "Fujiko",
+    "age": 22,
+    "skills": ["Python", "JavaScript"]
+<p>}</code></pre></p>
+
+<h2>函数</h2>
+
+<pre><code class="language-python">def greet(name):
+    return f"你好，{name}！"
+
+<p>print(greet("世界"))</code></pre></p>
+<hr>
+<blockquote>持续更新中……</blockquote>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

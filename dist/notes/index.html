@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📖 学习笔记 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>📖 学习笔记</h1>
+  <div class="meta"></div>
+  <p>这里是学习笔记分区，记录各种技术内容。</p>
+
+<p><details class="cat-group"><summary><h2>数据库 <span class="cat-count">(1)</span></h2></summary>
+<ul class="article-list">
+<li><a href="./database/database-基础.html"><span class="article-title">数据库基础笔记</span></a></li>
+</ul></details><details class="cat-group"><summary><h2>Linux <span class="cat-count">(23)</span></h2></summary>
+<ul class="article-list">
+<li><a href="./linux/ansible自动化运维工具.html"><span class="article-title">ansible自动化运维工具</span></a></li>
+<li><a href="./linux/docker简介和应用.html"><span class="article-title">docker简介和应用</span></a></li>
+<li><a href="./linux/k8s.html"><span class="article-title">k8s</span></a></li>
+<li><a href="./linux/LVM逻辑卷管理.html"><span class="article-title">LVM逻辑卷管理</span></a></li>
+<li><a href="./linux/Nginx.html"><span class="article-title">Nginx</span></a></li>
+<li><a href="./linux/shell.html"><span class="article-title">shell</span></a></li>
+<li><a href="./linux/ssh远程管理.html"><span class="article-title">End of file</span></a></li>
+<li><a href="./linux/tar.html"><span class="article-title">tar</span></a></li>
+<li><a href="./linux/vim.html"><span class="article-title">vim</span></a></li>
+<li><a href="./linux/内核升级.html"><span class="article-title">内核升级</span></a></li>
+<li><a href="./linux/基础命令.html"><span class="article-title">基础命令</span></a></li>
+<li><a href="./linux/常见数据库.html"><span class="article-title">常见数据库</span></a></li>
+<li><a href="./linux/文件管理.html"><span class="article-title">文件管理</span></a></li>
+<li><a href="./linux/文本处理.html"><span class="article-title">文本处理</span></a></li>
+<li><a href="./linux/时间同步.html"><span class="article-title">时间同步</span></a></li>
+<li><a href="./linux/服务管理.html"><span class="article-title">服务管理</span></a></li>
+<li><a href="./linux/源码安装nginx.html"><span class="article-title">源码安装nginx</span></a></li>
+<li><a href="./linux/用户管理.html"><span class="article-title">用户管理</span></a></li>
+<li><a href="./linux/磁盘与分区管理.html"><span class="article-title">磁盘与分区管理</span></a></li>
+<li><a href="./linux/网络配置.html"><span class="article-title">网络配置</span></a></li>
+<li><a href="./linux/计划任务.html"><span class="article-title">计划任务</span></a></li>
+<li><a href="./linux/软件包管理.html"><span class="article-title">yum</span></a></li>
+<li><a href="./linux/进程管理.html"><span class="article-title">进程管理</span></a></li>
+</ul></details><details class="cat-group"><summary><h2>Python <span class="cat-count">(1)</span></h2></summary>
+<ul class="article-list">
+<li><a href="./python/python-基础.html"><span class="article-title">Python 基础笔记</span></a></li>
+</ul></details></p>
+<hr>
+<blockquote>持续更新中……</blockquote>
+
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>源码安装nginx - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>源码安装nginx</h1>
+  <div class="meta"></div>
+  <h2>源码安装</h2>
+
+<pre><code class="language-shell">wget http://nginx.org/download/nginx-1.25.3.tar.gz	#源码包下载
+
+<p>#安装依赖</p>
+<p>yum -y install gcc pcre-devel zlib-developenssl-devel</p>
+
+<p>#进行解压</p>
+<p>tar -zxvf nginx-1.25.3.tar.gz</p>
+
+<p>#进入目录	</p>
+<p>cd nginx目录</p>
+
+<p>#指定安装目录</p>
+<p>例如：</p>
+<p>mkdir /opt/nginx</p>
+
+<p>./configure --prefix=/opt/nginx/	#指定安装目录</p>
+								 #检查系统环境 ./configure 检查依赖并生成编译规则
+
+<p>make	#进行源码编译</p>
+<p>make install 	#源码安装</p>
+<p>ls /opt/nginx	#查看文件是否安装</p>
+
+<p>/opt/nginx/sbin/nginx	#启动nginx服务</p>
+<p>ps -ef | grep nginx	#查看是否有nginx进程</p>
+
+<p>curl 127.0.0.1	#查看nginx网页 检查返回welcome</p>
+
+<p>ip a s</p>
+<p>192.168.100.130	#访问IP</code></pre></p>
+
+<p>!<a href="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251213235457950.png">image-20251213235457950</a></p>
+
+<pre><code class="language-shell">/opt/nginx/sbin/nginx -t	#查看nginx配置文件是否成功 文件是否正常
+
+<p>#创建软链接可以直接使用nginx -t查看</p>
+<p>ln /opt/nginx/sbin/nginx /usr/local/sbin/nginx</p>
+<p>nginx -t	#此时可直接查看</p>
+
+<p>rm /usr/local/sbin/nginx	#删除软链接</p>
+
+<p>#添加全局变量</p>
+<p>cd</p>
+<p>vim .bashrc</p>
+<p>export PATH=$PATH:/opt/nginx/sbin	#在最后一行添加</p>
+<p>source .bashrc</p>
+<p>nginx -t	#此时也可以直接使用</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

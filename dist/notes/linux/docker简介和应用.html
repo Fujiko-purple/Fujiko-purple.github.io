@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>docker简介和应用 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>docker简介和应用</h1>
+  <div class="meta"></div>
+  <h2>docker简介与作用</h2>
+
+<p>打包程序和环境 确保在任何地方都能运行</p>
+<p>提高隔离性与效率</p>
+<p>启动快 资源占用少</p>
+
+<h3>工作原理</h3>
+
+<p>将程序和依赖环境打包成镜像</p>
+<p>镜像启动后为容器——容器运行镜像实例</p>
+<p>docker引擎负责容器的创建和管理</p>
+<p>仓库负责存储和分发</p>
+
+<h3>镜像</h3>
+
+<p>静态的 只读的打包模板 装好了程序 依赖 环境 配置</p>
+
+<h3>容器</h3>
+
+<p>镜像的运行实例 相当于把程序放在容器中运行 实现环境隔离</p>
+
+<h3>仓库</h3>
+
+<p>集中存放和分发镜像的地方 分为私有和公用</p>
+
+<h3>docker引擎作用</h3>
+
+<p>docker引擎负责打包 运送和运行容器 </p>
+
+<h3>docker运行场景</h3>
+
+<p>一键启动测试环境</p>
+<p>搭建本地网站环境</p>
+<p>项目部署与测试</p>
+<hr>---
+
+
+
+<h2>docker安装与容器实战</h2>
+
+<h3>安装依赖工具</h3>
+
+<pre><code class="language-shell">yum install -y yum-utils
+<p>#工具包 能够帮助配置软件源</code></pre></p>
+
+<h3>添加docker官方仓库</h3>
+
+<pre><code class="language-shell">#添加官方仓库
+<p>yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo</p>
+
+<p>#安装docker命令</p>
+ yum install -y docker-ce docker-ce-cli containerd.io
+
+<p>#查看docker版本</p>
+<p>docker --version</p>
+
+<p>#启动命令 设置docker开机自启</p>
+<p>systemctl start docker</p>
+<p>systemctl enable docker</p>
+
+
+<p>#查看docker状态说明</p>
+<p>docker info</p>
+
+<p>#拉取想要的包</p>
+<p>docker pull nginx:1.24</p>
+<p>#拉取镜像文件到服务器 需要VPN</p>
+
+</code></pre>
+
+<h3>运行容器</h3>
+
+<pre><code class="language-shell">#使用镜像创建容器并运行
+<p>docker run hello-world</p>
+
+<p>#查看镜像</p>
+<p>docker images</p>
+
+<p>#查看运行的容器</p>
+<p>docker ps -a</code></pre></p>
+
+<h3>运行nginx</h3>
+
+<pre><code class="language-shell">docker run -d -p 8080:80 nginx:1.24：运行nginx的版本
+<p>-d：后台运行</p>
+<p>-p 8080:80：表示将本机的8080端口映射到容器的80端口 端口打通 访问本服务器8080端口时相当于访问容器80端口</p>
+<p>nginx:1.24：运行nginx的版本</p>
+
+<p>curl 127.0.0.1:8080</p>
+<p>#访问是否部署成功</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

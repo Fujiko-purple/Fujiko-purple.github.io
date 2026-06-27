@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基础命令 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>基础命令</h1>
+  <div class="meta"></div>
+  <h2>ls</h2>
+
+<pre><code class="language-shell">ls -l
+<p>ls -a</p>
+<p>ls -r	#反转排序顺序</p>
+<p>ls -t 	#按时间排序</p>
+<p>ls -F	#文件类型都会显示</code></pre></p>
+
+<h2>cd</h2>
+
+<pre><code class="language-shell">pwd
+<p>cd -	#返回上一次目录</p>
+<p>cd ~	#回到家目录</p>
+<p>cd /	#回到根目录</p>
+<p>cd ..	#回到上一级</p>
+<p>cd		#回到/root</code></pre></p>
+
+<h2>mkdir</h2>
+
+<pre><code class="language-shell">mkdir-创建目录
+<p>mkdir -p	#创造多级目录</p>
+<p>mkdir -m	#创建时设置权限</p>
+<p>mkdir -v	#输出显示目录是否创建成功</code></pre></p>
+
+
+
+<h2>rmdir</h2>
+
+<pre><code class="language-shell">rmdir-删除文件或目录
+<p>#只能删除目录</p>
+<p>rmdir -p 	#删除多级目录 前提是每个目录内容为空 </code></pre></p>
+
+<h2>rm</h2>
+
+<pre><code class="language-shell">rm -r	#删除目录
+<p>rm -f	#强制删除某个文件</p>
+<p>rm -rf	#强制删除非空目录不提示确认</code></pre></p>
+
+<h2>cp</h2>
+
+<pre><code class="language-shell">#复制文件
+<p>cp -r</code></pre></p>
+
+<h2>mv</h2>
+
+<pre><code class="language-shell">#移动文件到指定目录重命名文件
+<p>mv 原文件 改名文件</p>
+<p>mv 文件 移动目录</p>
+<p>mv 原文件 移动目录/改名文件</p>
+
+<p>mv 原文件 被覆盖文件	#注意 mv不仅是覆盖 并且还是改名 所以原文件覆盖另一个文件后 名字改成另一个文件</p>
+
+<p>mv -i #提示是否覆盖</p>
+<p>mv -v #显示移动过程 包括改名</p>
+<p>#iv可一起使用</code></pre></p>
+
+<h2>touch</h2>
+
+<pre><code class="language-shell">#创建空文件
+<p>可一次性创建多个文件</p>
+<p>touch -t 设置的时间戳 文件	#设置特定时间戳</p>
+<p>touch 文件名	#恢复时间</p>
+<p>touch -t 时间 *文件类型	#根据通配符统一改变文件时间戳</p>
+<p>touch --help	</code></pre></p>
+
+<h2>cat</h2>
+
+<pre><code class="language-shell">#查看文件内容
+<p>cat -E 文件名	#显示不会打印的内容 一般是每行最后都会有$</p>
+<p>cat 文件1 文件2 &gt; 文件3	#合并多个文件 合并的内容会覆盖文件3 文件内容顺序根据文件顺序排列</code></pre></p>
+
+<h2>echo</h2>
+
+<pre><code class="language-shell">echo 输出的内容
+
+<p>#输出定义的变量</p>
+<p>变量名=变量</p>
+<p>echo $变量名</p>
+<p>#会输出变量</p>
+<p>#在shell中会使用到</p>
+
+<p>echo $(cat 文件名)</p>
+<p>#输出文件内容 并且不会按照文件内容换行 只会空格</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

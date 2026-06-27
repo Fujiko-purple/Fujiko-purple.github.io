@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vim - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>vim</h1>
+  <div class="meta"></div>
+  <li>批量替换</li>
+  - ：$s/旧内容/更改内容/g
+<li>快捷</li>
+  - G 回到最后一行
+  - gg 回到第一行
+<li>vim +行号 文件名</li>
+  - 进入后光标在的位置
+<li>进入到具体的行</li>
+  - n（行号） + G n（行号）+ gg
+<li>在某一行下新添加一行</li>
+  - o键
+<li>快速删除某一行</li>
+  - dd
+  - 撤销删除的行
+    - u
+  - 取消撤销
+    - ctrl+r
+  - 快速删除n行
+    - n+dd 14dd-删除14行
+  - dd删除的实则是剪切
+    - 通过p可以粘贴回来
+<li>查找某个单词</li>
+  - 命令模式下
+    - /查找的内容
+    - n可以移动光标在查找的内容之间移动
+      - 从上往下查找
+    - N
+      - 从下往上查找
+<li>打开行号</li>
+  - :set nu 
+<li>快速到达某一行</li>
+  - ：行号
+  - ：69
+    - 快速到达69行
+<li>vimtutor</li>
+  - vim教程
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

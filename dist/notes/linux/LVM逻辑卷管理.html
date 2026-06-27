@@ -1,0 +1,200 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LVM逻辑卷管理 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>LVM逻辑卷管理</h1>
+  <div class="meta"></div>
+  <h2>LVM核心组卷</h2>
+
+<p>物理卷PV</p>
+<p>实际硬盘分区 类似砖块</p>
+
+<p>卷组VG</p>
+<p>由多个物理卷组成的卷池 类似砖块砌成的墙</p>
+
+<p>逻辑卷LV</p>
+<p>从卷组中划分的分区 类似从墙上划分的房间</p>
+
+<p>查找是否安装逻辑卷</p>
+
+<pre><code class="language-shell">rpm -qa | grep lvm2
+
+<p>yum -y install lvm2	#安装</code></pre></p>
+
+<pre><code class="language-shell">lsblk	#查看磁盘情况</code></pre>
+
+<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251212170436455.png" alt="image-20251212170436455" style="zoom:50%;" />
+
+<p>在设置中 添加->下一步->默认->大小设置->点击完成 硬盘添加成功</p>
+
+<pre><code class="language-shell">#初始为磁盘 要创建成物理卷
+<p>pvcreate /dev/磁盘名称</p>
+
+<p>pvs	#查看简略信息</p>
+
+<p>pvdisplay	#查看详细信息</code></pre></p>
+
+<pre><code class="language-shell">#创建卷组
+<p>vgcreate 卷组名 /dev/物理卷</p>
+
+<p>vgs	#简略查看</p>
+
+<p>vgdisplay	#详细查看</code></pre></p>
+
+<pre><code class="language-shell">#创建逻辑卷
+<p>lvcreate -L 3G -n lv_mysql 卷组名</p>
+<p>-L 定义容量大小</p>
+<p>-n 赋予名称</p>
+
+<p>lvs	#查看简略信息</p>
+
+<p>lvdisplay	#查看详细信息</p>
+</code></pre>
+
+<pre><code class="language-shell">#格式化逻辑卷
+<p>mkfs.xfs /dev/卷组名/逻辑卷名</code></pre></p>
+
+<pre><code class="language-shell">#格式化后 创建目录并挂载
+<p>mkdir 创建目录</p>
+
+<p>mount /dev/卷组名/逻辑卷名 挂载的目录</p>
+
+<p>df -h	#查看是否挂载成功</code></pre></p>
+
+<pre><code class="language-shell">#启动自动挂载
+<p>vim /etc/fstab</p>
+
+<p>/dev/vg_data/lv_mysql   /mnt/mysql_data xfs.defaults    0 0</p>
+
+<p>mount -a </p>
+<p>#没有报错 说明挂载成功</code></pre></p>
+<hr>---
+
+
+
+<h2>动态扩展逻辑卷</h2>
+
+<pre><code class="language-shell">#扩容卷组
+<p>vgextend 已经存在的卷组 /dev/要扩容的磁盘</p>
+<p>pvs	#查看扩容是否成功</p>
+
+<p>#扩容逻辑卷</p>
+<p>lvextend -L +2G /dev/vg_data/lv_mysql#要扩容的逻辑卷</p>
+
+<p>#进行格式化</p>
+<p>xfs_growfs /dev/vg_data/lv_mysql</p>
+
+<p>df -h	#查看逻辑卷是否扩容成功</code></pre></p>
+<hr>---
+
+
+
+<h2>缩减逻辑卷</h2>
+
+<h3>1.卸载文件系统</h3>
+
+<pre><code class="language-shell">umount /dev/挂载的文件
+<p>df -h	#查看是否卸载成功</code></pre></p>
+
+
+
+<h3>2.强制检查文件系统</h3>
+
+<pre><code class="language-shell">e2fsck -f /dev/卷组名/逻辑卷名</code></pre>
+
+
+
+<h3>3.调整文件系统大小</h3>
+
+<pre><code class="language-shell">resize2fs /dev/vg_data/lv_chenlei 3G
+<p>调整大小的命令：resize2fs </p>
+<p>卷组名/逻辑卷名</code></pre></p>
+
+
+
+<h3>4.调整逻辑卷大小</h3>
+
+<pre><code class="language-shell">lvreduce -L 4G /dev/vg_data/lv_chenlei 
+<p>缩减4G</code></pre></p>
+
+<h3>5.重新挂载逻辑卷</h3>
+
+<pre><code class="language-shell">mount 挂载的目录
+<p>df -h</code></pre></p>
+<hr>---
+
+
+
+<h2>创建逻辑卷快照卷</h2>
+
+
+
+<pre><code class="language-shell">#删除逻辑卷
+<p>lvs</p>
+<p>lvremove /dev/vg_data/lv_mysql /dev/vg_data/lv_chenlei</p>
+<p>#可以同时删除多个逻辑卷</p>
+
+<p>#删除卷组</p>
+<p>vgs</p>
+<p>vgremove 卷组名字</p>
+
+<p>#删除物理卷</p>
+<p>pvs</p>
+<p>pyremove /dev/物理卷名字</p>
+
+<p>lsblk	#查看磁盘</p>
+<p>#通过设置来移除磁盘</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

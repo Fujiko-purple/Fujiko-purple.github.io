@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户管理 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>用户管理</h1>
+  <div class="meta"></div>
+  <h2>useradd</h2>
+
+<pre><code class="language-shell">#创建用户 默认添加到/home
+
+<p>#密码设置 </p>
+<p>passwd 用户名	#修改用户密码</p>
+<p>passwd -l 用户名	#锁定账号 让账号无法登录</p>
+<p>passwd -u 用户名	#解锁用户 让用户可以重新登录</p>
+<p>passwd -e 用户名	#强制用户下次登录修改密码</p>
+
+<p>chage #设置密码过期时间</p>
+<p>chage -l	#显示密码时间相关信息</p>
+<p>chage -E 时间 账户名	#设置密码过期时间</code></pre></p>
+
+
+
+<h2>用户组管理 groupadd</h2>
+
+<pre><code class="language-shell">#创建组
+<p>groupadd 组名</p>
+
+<p>#将用户添加到组当中</p>
+<p>usermod -aG	组名 用户名</p>
+
+<p>#将用户从组中踢出</p>
+<p>gpasswd -d 用户名 组名</p>
+
+<p>#删除组</p>
+<p>groupdel 组名</p>
+
+<p>#查看组内多少成员</p>
+<p>getent group 组名</p>
+
+<p>#文件下存储的组</p>
+<p>/etc/group</p>
+</code></pre>
+
+
+
+<h2>添加用户到sudo组</h2>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

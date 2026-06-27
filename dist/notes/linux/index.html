@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linux - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>Linux</h1>
+  <div class="meta"></div>
+  <p><details class="cat-group"><summary><h2>Linux <span class="cat-count">(23)</span></h2></summary>
+<ul class="article-list">
+<li><a href="./ansible自动化运维工具.html"><span class="article-title">ansible自动化运维工具</span></a></li>
+<li><a href="./docker简介和应用.html"><span class="article-title">docker简介和应用</span></a></li>
+<li><a href="./k8s.html"><span class="article-title">k8s</span></a></li>
+<li><a href="./LVM逻辑卷管理.html"><span class="article-title">LVM逻辑卷管理</span></a></li>
+<li><a href="./Nginx.html"><span class="article-title">Nginx</span></a></li>
+<li><a href="./shell.html"><span class="article-title">shell</span></a></li>
+<li><a href="./ssh远程管理.html"><span class="article-title">End of file</span></a></li>
+<li><a href="./tar.html"><span class="article-title">tar</span></a></li>
+<li><a href="./vim.html"><span class="article-title">vim</span></a></li>
+<li><a href="./内核升级.html"><span class="article-title">内核升级</span></a></li>
+<li><a href="./基础命令.html"><span class="article-title">基础命令</span></a></li>
+<li><a href="./常见数据库.html"><span class="article-title">常见数据库</span></a></li>
+<li><a href="./文件管理.html"><span class="article-title">文件管理</span></a></li>
+<li><a href="./文本处理.html"><span class="article-title">文本处理</span></a></li>
+<li><a href="./时间同步.html"><span class="article-title">时间同步</span></a></li>
+<li><a href="./服务管理.html"><span class="article-title">服务管理</span></a></li>
+<li><a href="./源码安装nginx.html"><span class="article-title">源码安装nginx</span></a></li>
+<li><a href="./用户管理.html"><span class="article-title">用户管理</span></a></li>
+<li><a href="./磁盘与分区管理.html"><span class="article-title">磁盘与分区管理</span></a></li>
+<li><a href="./网络配置.html"><span class="article-title">网络配置</span></a></li>
+<li><a href="./计划任务.html"><span class="article-title">计划任务</span></a></li>
+<li><a href="./软件包管理.html"><span class="article-title">yum</span></a></li>
+<li><a href="./进程管理.html"><span class="article-title">进程管理</span></a></li>
+</ul></details></p>
+
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

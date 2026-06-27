@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>shell - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>shell</h1>
+  <div class="meta"></div>
+  <h2>基本语法</h2>
+
+<pre><code class="language-shell">第一步：新建脚本文件
+<p>vim 文件名.sh</p>
+
+<p>第二步:定义脚本解释器 注释说明</p>
+<p>#!/bin/bash</p>
+
+<p>第三步；编写脚本内容</p>
+
+<p>第四步：添加权限</p>
+<p>chmod +x 文件名.sh</p>
+<p>#添加执行权限</p>
+
+<p>第五步：运行脚本</p>
+<p>./脚本名字</p>
+
+<p>bash 脚本名字	#不需要权限也可以运行</code></pre></p>
+
+<h2>if条件判断</h2>
+
+<pre><code class="language-shell">if [ ]; then
+
+<p>else</p>
+
+<p>fi</p>
+
+<p>常用指令：</p>
+<p>-d	：检查输入是否是目录</p>
+<p>-f	：检查文件</code></pre></p>
+
+<h2>for循环</h2>
+
+<pre><code class="language-shell">for i in ; do
+
+<p>done</p>
+
+<p>#do指开始 done指结束</code></pre></p>
+
+<h2>while循环</h2>
+
+<pre><code></code></pre>
+
+
+
+<h2>基础用法</h2>
+
+<h3>使用echo命令</h3>
+
+<pre><code class="language-shell">#基本输出功能
+<p>echo -e		#控制格式</p>
+<p>\n		#换行</p>
+
+<p>#输出重定向</p>
+	标准重定向
+		输出的内容 &gt; 输入的文件
+			#会将输出的内容覆盖掉输入的文件内容
+	追加重定向
+		输出的内容 &gt;&gt; 输入的文件
+			#在输入文件原内容末尾添加新内容
+	错误输出重定向
+		2&gt;
+			#将输出的错误内容重定向到文件
+	同时重定向标准输出和错误输出
+		&amp;&gt;
+			#会将错误的正确的信息同时输出重定向</code></pre>
+
+<h3>变量的使用</h3>
+
+<pre><code class="language-shell">#变量赋值
+<p>var=value</p>
+
+<p>#变量使用方法 ： 在变量名前加上$</p>
+<p>ehco $var</p>
+<p>#输出value</p>
+
+<p>#位置参数</p>
+<p>$1</p>
+<p>$2</p>
+<p>$3</p>
+<p>bash demo.sh 陈雷 阿彪 阿丽</p>
+
+<p>这是第一个变量 陈雷</p>
+<p>这是第二个变量 阿彪</p>
+<p>这是第三个变量 阿丽</p>
+
+<p>#特殊变量</p>
+<p>echo $?</p>
+	表示上一个命令的退出状态
+	0通常表示成功
+	非0通常表示失败</code></pre>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

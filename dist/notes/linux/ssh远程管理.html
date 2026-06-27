@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>End of file - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>End of file</h1>
+  <div class="meta"></div>
+  <h2>禁止root登录</h2>
+
+<pre><code class="language-shell">#在root账号下
+<p>vim /etc/ssh/sshd_config</p>
+
+<p>#修改PermitRootLogin</p>
+<p>PermitRootLogin no	#取消注释</p>
+
+<p>#重启</p>
+<p>systemctl restart sshd</p>
+
+<p>#此时禁止root远程登录</code></pre></p>
+
+<h2>限制并发数</h2>
+
+<pre><code class="language-shell">vim /etc/security/limits.conf
+
+<p>#在最后一行修改</p>
+<p>root    hard    maxlogins       3</p>
+<p>#表示限制最大登录root数为3个</p>
+
+<p>#重启</p>
+<p>systemctl restart sshd</p>
+
+<p>#查看登录的数量</p>
+<p>w</p>
+
+<p>#限制时 没有限制秘钥的并发数</p>
+<p>#只限制密码登录并发数</code></pre></p>
+
+<h2>超时退出设置</h2>
+
+<pre><code class="language-shell">vim /etc/ssh/sshd_config
+
+<p>ClientAliveInterval 设置超时的时间</p>
+
+<p>#全局会话的超时限制</p>
+<p>vim /etc/profile</p>
+<p>#在最底下添加</p>
+<p>export TMOUT=3600	#没有操作的时间超过了3600秒就会退出</p>
+
+<p>source /etc/profile	#重启文件</code></pre></p>
+
+<h2> 密码复杂度设置</h2>
+
+<pre><code></code></pre>
+
+<h2>密码时效性设置</h2>
+
+<pre><code class="language-shell">vim /etc/login.defs
+<p>PASS_MAX_DAYS   99999 #密码最长有效期</p>
+<p>PASS_MIN_DAYS   0	#最小修改天数间隔</p>
+<p>PASS_WARN_AGE   7	#过期前多少天提醒修改密码</code></pre></p>
+
+<p>##</p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

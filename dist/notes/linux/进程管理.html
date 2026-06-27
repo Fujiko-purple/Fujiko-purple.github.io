@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>进程管理 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>进程管理</h1>
+  <div class="meta"></div>
+  <h2>进程状态</h2>
+
+<pre><code class="language-shell">runing
+<p>sleeping</p>
+<p>zimbiz</p>
+<p>stopped</code></pre></p>
+
+
+
+<h2>ps -aux</h2>
+
+<pre><code class="language-shell">#查看电脑有多少个进程
+<p>ps -aux</p>
+
+<p>%CPU	进程CPU使用率</p>
+<p>%MEM	内存使用率</code></pre></p>
+
+
+
+<h2>pgrep gdm</h2>
+
+<pre><code class="language-shell">#查看所有进程名为gdm的id</code></pre>
+
+<h2>pstree</h2>
+
+<pre><code class="language-shell">pstree -p 数字</code></pre>
+
+<h2>进程管理</h2>
+
+<pre><code class="language-shell">skill 
+<p>kill -2</p>
+<p>kill -9	#强制终止进程 不会保存数据</p>
+</code></pre>
+
+
+
+<h2>nohup</h2>
+
+<pre><code class="language-shell">#后台守护进程</code></pre>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+

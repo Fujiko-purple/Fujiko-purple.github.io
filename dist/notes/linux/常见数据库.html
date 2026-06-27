@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>常见数据库 - Fujiko 的小站</title>
+  <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="nav-left">
+      <a href="../../../index.html">🏠</a>
+      <span class="site-name">Fujiko 的小站</span>
+      <span style="color:var(--text-light);font-size:0.85rem">/</span>
+      <a href="../../../dist/notes/index.html">学习笔记</a>
+    </div>
+    <div class="nav-right">
+      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
+    </div>
+  </div>
+</div>
+<div class="content-page">
+  <h1>常见数据库</h1>
+  <div class="meta"></div>
+  <h2>关系型数据库</h2>
+
+<pre><code>表格形式存储 支持SQL查询
+<p>适用：交易系统 ERP</code></pre></p>
+
+<h2>非关系型数据库（）</h2>
+
+<h3>文档型数据库 MongoDB</h3>
+
+<pre><code>数据模型：类似JSON  无固定表结构
+<p>适用：内容管理 实时分析 日志存储</code></pre></p>
+
+<h3>键值型数据库redis</h3>
+
+<pre><code>数据模型：key-value 内存优先 支持持久化
+<p>适用：缓存 会话管理 实时排行榜</code></pre></p>
+
+<h2>时间序列数据库</h2>
+
+<h3>influxDB</h3>
+
+<pre><code>数据模型：时间戳组织数据 自动压缩过期数据
+<p>适用场景：服务监控 传感器数据采集</code></pre></p>
+
+<h2>图数据库</h2>
+
+<h3>Ne04j</h3>
+
+<pre><code>数据模型：节点和关系表示数据
+<p>适用场景：社交网络分析 欺诈检测 推荐系统</code></pre></p>
+</div>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span>📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var toggle = document.getElementById('menuToggle');
+  var drawer = document.getElementById('drawer');
+  var overlay = document.getElementById('drawerOverlay');
+  var close = document.getElementById('drawerClose');
+  if (!toggle || !drawer || !overlay) return;
+  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
+  toggle.addEventListener('click', open);
+  overlay.addEventListener('click', closeDrawer);
+  if (close) close.addEventListener('click', closeDrawer);
+})();
+</script></body>
+</html>
+
+
+
