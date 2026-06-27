@@ -1,25 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>源码安装nginx - Fujiko 的小站</title>
+  <title>源码安装nginx - Fujiko</title>
   <link rel="stylesheet" href="../../../style.css">
 </head>
 <body>
+<div id="particles"></div>
+
 <div class="topbar">
   <div class="topbar-inner">
-    <div class="nav-left">
-      <a href="../../../index.html">🏠</a>
-      <span class="site-name">Fujiko 的小站</span>
-      <span style="color:var(--text-light);font-size:0.85rem">/</span>
-      <a href="../../../dist/notes/index.html">学习笔记</a>
-    </div>
-    <div class="nav-right">
-      <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
-    </div>
+    <a href="../../../index.html">🏠</a>
+    <span class="sep">/</span>
+    <a href="../../../dist/notes/index.html">学习笔记</a>
+    <span class="flex"></span>
+    <a href="../../../dist/notes/index.html" title="学习笔记">📖</a>
+    <a href="../../../dist/novels/index.html" title="小说创作">✍️</a>
+    <a href="../../../dist/airp/index.html" title="AIRP 体验">🎭</a>
   </div>
 </div>
+
 <div class="content-page">
   <h1>源码安装nginx</h1>
   <div class="meta"></div>
@@ -72,37 +73,40 @@
 <p>source .bashrc</p>
 <p>nginx -t	#此时也可以直接使用</code></pre></p>
 </div>
+
 <footer class="footer">
-  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+  <p>&copy; 2026 Fujiko</p>
 </footer>
-<div class="drawer-overlay" id="drawerOverlay"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-header">
-    <span>📋 导航</span>
-    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
-  </div>
-  <div class="drawer-body">
-    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
-    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
-    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
-    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
-  </div>
-</div>
+
 <script>
 (function(){
-  var toggle = document.getElementById('menuToggle');
-  var drawer = document.getElementById('drawer');
-  var overlay = document.getElementById('drawerOverlay');
-  var close = document.getElementById('drawerClose');
-  if (!toggle || !drawer || !overlay) return;
-  function open(){ drawer.classList.add('open'); overlay.classList.add('visible'); }
-  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('visible'); }
-  toggle.addEventListener('click', open);
-  overlay.addEventListener('click', closeDrawer);
-  if (close) close.addEventListener('click', closeDrawer);
+  var c = document.getElementById('particles');
+  if (!c) return;
+  var colors = ['#f9a8d4','#fce7f3','#fbcfe8','#e9d5ff','#fef3c7','#fff'];
+  for (var i = 0; i < 15; i++) {
+    var p = document.createElement('div');
+    p.className = 'particle';
+    var size = 2 + Math.random() * 4;
+    var dur = 10 + Math.random() * 10;
+    var x = Math.random() * 100;
+    var y = 10 + Math.random() * 80;
+    var d = 80 + Math.random() * 120;
+    var r = (Math.random() - 0.5) * 360;
+    var col = colors[Math.floor(Math.random() * colors.length)];
+    p.style.width = size + 'px';
+    p.style.height = size * (0.6 + Math.random() * 0.4) + 'px';
+    p.style.background = col;
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '40% 0 40% 0';
+    p.style.left = x + '%';
+    p.style.top = y + '%';
+    p.style.setProperty('--d', d + 'px');
+    p.style.setProperty('--r', r + 'deg');
+    p.style.animation = 'floatPetals ' + dur + 's ease-in-out infinite';
+    p.style.animationDelay = '-' + (Math.random() * dur) + 's';
+    p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + col;
+    c.appendChild(p);
+  }
 })();
-</script></body>
+</script>
+</body>
 </html>
-
-
-
