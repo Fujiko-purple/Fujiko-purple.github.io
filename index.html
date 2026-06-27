@@ -1,24 +1,53 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的个人网站</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            text-align: center;
-            padding: 50px;
-        }
-        h1 {
-            color: #007BFF;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fujiko 的个人小站</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>欢迎来到我的个人网站！</h1>
-    <p>这是我的第一个GitHub Pages网站。</p>
+<div class="sparkle-container">
+  <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+  <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+  <div class="sparkle"></div><div class="sparkle"></div>
+</div>
+<header class="hero">
+  <div class="avatar"><div class="avatar-inner">🌸</div></div>
+  <h1>Fujiko 的小站</h1>
+  <p class="subtitle">记录学习 · 创作 · 胡思乱想</p>
+</header>
+<nav class="section-nav">
+  <h2>📋 内容分区</h2>
+  <div class="card-grid">
+    <a href="dist/notes/index.html" class="card">
+      <div class="card-icon">📖</div>
+      <h3>学习笔记</h3>
+      <p>Python、数据库、Agent … 学过的都记在这里</p>
+      <span class="card-badge">阅读</span>
+    </a>
+    <a href="dist/novels/index.html" class="card">
+      <div class="card-icon">✍️</div>
+      <h3>小说创作</h3>
+      <p>自己写的故事，慢慢填坑中</p>
+      <span class="card-badge">阅读</span>
+    </a>
+    <a href="dist/airp/index.html" class="card">
+      <div class="card-icon">🎭</div>
+      <h3>AIRP 体验</h3>
+      <p>AI 角色扮演的心得与记录</p>
+      <span class="card-badge">阅读</span>
+    </a>
+    <a class="card" style="opacity:0.5;cursor:default">
+      <div class="card-icon">🔮</div>
+      <h3>更多分区</h3>
+      <p>待拓展……</p>
+      <span class="card-badge">即将开放</span>
+    </a>
+  </div>
+</nav>
+<footer class="footer">
+  <p>&copy; 2026 Fujiko &middot; 用 ❤️ 和 Markdown 维护</p>
+</footer>
 </body>
 </html>
