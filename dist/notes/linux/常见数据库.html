@@ -15,9 +15,7 @@
     <span class="sep">/</span>
     <a href="../../../dist/notes/index.html">学习笔记</a>
     <span class="flex"></span>
-    <a href="../../../dist/notes/index.html" title="学习笔记">📖</a>
-    <a href="../../../dist/novels/index.html" title="小说创作">✍️</a>
-    <a href="../../../dist/airp/index.html" title="AIRP 体验">🎭</a>
+    <button class="menu-btn" id="menuToggle" aria-label="菜单">☰</button>
   </div>
 </div>
 
@@ -90,5 +88,31 @@
   }
 })();
 </script>
-</body>
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">📋 导航</span>
+    <button class="drawer-close" id="drawerClose" aria-label="关闭">✕</button>
+  </div>
+  <div class="drawer-body">
+    <a href="../../../index.html" class="drawer-link">🏠 首页</a>
+    <a href="../../../dist/notes/index.html" class="drawer-link">📖 学习笔记</a>
+    <a href="../../../dist/novels/index.html" class="drawer-link">✍️ 小说创作</a>
+    <a href="../../../dist/airp/index.html" class="drawer-link">🎭 AIRP 体验</a>
+  </div>
+</div>
+<script>
+(function(){
+  var t = document.getElementById('menuToggle');
+  var d = document.getElementById('drawer');
+  var o = document.getElementById('drawerOverlay');
+  var c = document.getElementById('drawerClose');
+  if (!t || !d || !o) return;
+  function open(){ d.classList.add('open'); o.classList.add('visible'); }
+  function cls(){ d.classList.remove('open'); o.classList.remove('visible'); }
+  t.addEventListener('click', open);
+  o.addEventListener('click', cls);
+  if (c) c.addEventListener('click', cls);
+})();
+</script></body>
 </html>
