@@ -123,28 +123,28 @@
 (function(){
   var c = document.getElementById('particles');
   if (!c) return;
-  var colors = ['#f9a8d4','#fce7f3','#fbcfe8','#e9d5ff','#fef3c7','#fff'];
-  for (var i = 0; i < 15; i++) {
+  var colors = ['#f9a8d4','#f472b6','#fbcfe8','#e9d5ff','#c084fc','#fef3c7','#fde68a','#fff','#fdf2f8'];
+  for (var i = 0; i < 22; i++) {
     var p = document.createElement('div');
     p.className = 'particle';
-    var size = 2 + Math.random() * 4;
-    var dur = 10 + Math.random() * 10;
+    var size = 3 + Math.random() * 6;
+    var dur = 7 + Math.random() * 10;
     var x = Math.random() * 100;
-    var y = 10 + Math.random() * 80;
-    var d = 80 + Math.random() * 120;
+    var y = 5 + Math.random() * 85;
+    var d = 90 + Math.random() * 150;
     var r = (Math.random() - 0.5) * 360;
     var col = colors[Math.floor(Math.random() * colors.length)];
     p.style.width = size + 'px';
-    p.style.height = size * (0.6 + Math.random() * 0.4) + 'px';
+    p.style.height = size * (0.5 + Math.random() * 0.5) + 'px';
     p.style.background = col;
-    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '40% 0 40% 0';
+    p.style.borderRadius = size > 6 ? '50%' : (Math.random() > 0.5 ? '50%' : '40% 0 40% 0');
     p.style.left = x + '%';
     p.style.top = y + '%';
     p.style.setProperty('--d', d + 'px');
     p.style.setProperty('--r', r + 'deg');
     p.style.animation = 'floatPetals ' + dur + 's ease-in-out infinite';
     p.style.animationDelay = '-' + (Math.random() * dur) + 's';
-    p.style.boxShadow = '0 0 ' + (size * 2) + 'px ' + col;
+    p.style.boxShadow = size > 6 ? '0 0 ' + (size * 4) + 'px ' + col : '0 0 ' + (size * 3) + 'px ' + col;
     c.appendChild(p);
   }
 })();
