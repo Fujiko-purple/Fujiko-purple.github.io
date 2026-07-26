@@ -329,6 +329,10 @@ function injectArticleLists(srcDir, outDir, dk) {
   } else {
     listHtml = '\n<p style="color:var(--text-light)">暂无内容，敬请期待……</p>';
   }
+  // 学习笔记分区根页：文章列表外再包一层站内搜索
+  if (dk === 'notes' && outDir === join(DIST, 'notes') && articles.length > 0) {
+    listHtml = buildSearchBlock(articles, listHtml);
+  }
   idx = idx.replace('{{ARTICLE_LIST}}', listHtml);
   writeFileSync(indexPath, idx, 'utf-8');
   const rel = outDir.replace(DIST+'\\', '').replace(DIST+'/', '');
@@ -343,10 +347,20 @@ function injectArticleLists(srcDir, outDir, dk) {
   }
 }
 
+// Markdown 转纯文本摘要（站内搜索索引用）：去代码块和标记符，压空白，截断
+function plainText(md) {
+  return md
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/[#>*`\-\[\]()|!]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 300);
+}
+
 function collectArticleInfo(baseOutDir, srcDir, outDir, articles) {
   const entries = readdirSync(srcDir, { withFileTypes: true });
   const relFromBase = outDir.replace(baseOutDir, '').replace(/\\/g, '/');
-  
+
   for (const entry of entries) {
     if (entry.isFile() && entry.name.endsWith('.md') && entry.name !== '_index.md') {
       const mdc = readFileSync(join(srcDir, entry.name), 'utf-8');
@@ -354,12 +368,58 @@ function collectArticleInfo(baseOutDir, srcDir, outDir, articles) {
       let bhtml = mdToHtml(body.replace(/\r/g, ''));
       const pt = title || bhtml.match(/<h1>(.*?)<\/h1>/)?.[1] || basename(entry.name, '.md');
       const href = '.' + relFromBase + '/' + basename(entry.name, '.md') + '.html';
-      articles.push({ title:pt, date:date||'', href:href.replace(/\\/g, '/'), cat:cat });
+      articles.push({ title:pt, date:date||'', href:href.replace(/\\/g, '/'), cat:cat, excerpt: plainText(body) });
     }
     if (entry.isDirectory() && !entry.name.startsWith('.')) {
       collectArticleInfo(baseOutDir, join(srcDir, entry.name), join(outDir, entry.name), articles);
     }
   }
+}
+
+// 生成站内搜索块：搜索框 + 内嵌索引 + 过滤脚本（多关键词空格分隔，AND 匹配）
+function buildSearchBlock(articles, listHtml) {
+  const idx = articles.map(a => ({
+    t: esc(a.title),
+    d: a.date,
+    h: a.href,
+    c: esc(CAT_NAMES[a.cat] || a.cat || ''),
+    x: esc(a.excerpt || ''),
+  }));
+  // </script> 防拆：JSON 里的 < 转为 <
+  const json = JSON.stringify(idx).replace(/</g, '\\u003c');
+  return `
+<div class="search-box"><input id="searchInput" type="search" placeholder="搜索 ${articles.length} 篇笔记：标题、正文、分类……" autocomplete="off"></div>
+<div class="search-info" id="searchInfo" style="display:none"></div>
+<ul class="article-list" id="searchResults" style="display:none"></ul>
+<div id="groupList">
+${listHtml}
+</div>
+<script>
+var NOTE_IDX = ${json};
+(function(){
+  var inp = document.getElementById('searchInput');
+  var res = document.getElementById('searchResults');
+  var info = document.getElementById('searchInfo');
+  var grp = document.getElementById('groupList');
+  if (!inp) return;
+  inp.addEventListener('input', function(){
+    var q = this.value.trim().toLowerCase();
+    if (!q) { res.style.display='none'; info.style.display='none'; grp.style.display=''; return; }
+    var terms = q.split(/\\s+/);
+    var hits = NOTE_IDX.filter(function(a){
+      var hay = (a.t + ' ' + a.c + ' ' + a.x).toLowerCase();
+      return terms.every(function(t){ return hay.indexOf(t) >= 0; });
+    });
+    grp.style.display = 'none';
+    info.style.display = '';
+    info.textContent = hits.length ? '匹配 ' + hits.length + ' 篇' : '没有找到，换个关键词试试';
+    res.style.display = hits.length ? '' : 'none';
+    res.innerHTML = hits.map(function(a){
+      return '<li><a href="' + a.h + '"><span class="article-title">' + a.t + '</span><span class="article-meta">' + a.c + (a.d ? ' · ' + a.d : '') + '</span></a></li>';
+    }).join('');
+  });
+})();
+</script>`;
 }
 
 build();
