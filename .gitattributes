@@ -1,0 +1,12 @@
+# 统一换行符：所有文本文件在仓库中以 LF 存储，检出时也保持 LF
+# （build.mjs 输出 LF，此配置根治 dist/ 下 HTML 的换行符伪修改问题）
+* text=auto eol=lf
+
+# 二进制文件不做任何换行符处理
+*.jpeg binary
+*.jpg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
