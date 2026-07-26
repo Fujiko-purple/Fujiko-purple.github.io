@@ -254,6 +254,8 @@ function injectArticleLists(srcDir, outDir, dk) {
       groups[g].push(a);
     }
     for (const [g, items] of Object.entries(groups)) {
+      // 组内按日期降序（新笔记在前）；无日期的排最后，同日期保持文件名序
+      items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
       const heading = CAT_NAMES[g] || g;
       const open = '';
       listHtml += '<details class="cat-group"' + open + '>';
