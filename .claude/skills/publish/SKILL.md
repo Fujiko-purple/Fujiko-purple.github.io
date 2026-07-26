@@ -45,7 +45,18 @@ until curl -s "https://api.github.com/repos/Fujiko-purple/Fujiko-purple.github.i
 
    然后读取最新 run 的 `conclusion`。失败则查询失败步骤（`/actions/runs/<id>/jobs`）并报告。
 
-6. **线上验证**：CI 成功后，对本次修改涉及的页面 URL（以及首页）执行 `curl -s -o /dev/null -w "%{http_code}"`，确认全部 200。URL 规则：`https://fujiko-purple.github.io/` + dist/ 内相对路径，如 `content/notes/linux/vim.md` → `/notes/linux/vim.html`。
+6. **线上验证**：CI 成功后，对本次修改涉及的页面 URL（以及首页）确认全部 200。URL 规则：`https://fujiko-purple.github.io/` + dist/ 内相对路径，如 `content/notes/linux/vim.md` → `/notes/linux/vim.html`。
+   **⚠️ 中文文件名必须 percent-encode 后再请求**（curl 不会自动编码，直接请求会假 404），用 node 最稳：
+
+```bash
+node -e "
+(async()=>{
+  for(const p of ['notes/linux/vim.html','notes/algorithm/01_二分查找.html']){  // 换成实际页面
+    const r=await fetch('https://fujiko-purple.github.io/'+p.split('/').map(encodeURIComponent).join('/'),{method:'HEAD'});
+    console.log(r.status,p);
+  }
+})()"
+```
 
 7. **汇报**：一句话总结上线了什么 + 可点击的线上链接。
 
