@@ -23,23 +23,18 @@
   <h1>计划任务</h1>
   <div class="meta"></div>
   <h2>cron定时任务</h2>
-
 <pre><code class="language-shell">#编辑任务
-<p>crontab -e</p>
+crontab -e
 
-<li><em> </em> <em> </em> ls /date	#分时日月周</li>
-<p>crontab -l	#查看定时任务</p>
-<p>crontab -r	#删除任务</code></pre></p>
-
-
-
+* * * * * ls /date	#分时日月周
+crontab -l	#查看定时任务
+crontab -r	#删除任务</code></pre>
 <h2>At命令</h2>
-
 <pre><code class="language-shell">#在特定时间执行一次任务
-<p>atq	#查看任务</p>
-<p>at -l</p>
+atq	#查看任务
+at -l
 
-<p>atrm 任务编号	#删除任务</code></pre></p>
+atrm 任务编号	#删除任务</code></pre>
 </div>
 
 <footer class="footer">

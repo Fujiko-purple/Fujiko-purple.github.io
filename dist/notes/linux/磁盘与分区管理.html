@@ -23,46 +23,38 @@
   <h1>磁盘与分区管理</h1>
   <div class="meta"></div>
   <h2>磁盘命名</h2>
-
-
-
 <h2>查看磁盘信息</h2>
-
 <pre><code class="language-shell">df
-<p>df -h	#显示多少g</p>
-<p>du -sh 目录	#查看占多少大小</p>
-<p>lsblk	#查看文件分区挂载信息</p>
-<p>iostat	#查看磁盘i/o统计</code></pre></p>
-
-
-
+df -h	#显示多少g
+du -sh 目录	#查看占多少大小
+lsblk	#查看文件分区挂载信息
+iostat	#查看磁盘i/o统计</code></pre>
 <h2>创建新分区</h2>
-
 <pre><code class="language-shell">#分区操作
-<p>手动添加</p>
+手动添加
 
-<p>#选择分区类型</p>
-<p>fdisk</p>
+#选择分区类型
+fdisk
 
-<p>#分区大小规划</p>
+#分区大小规划
 
-<p>#文件格式化</p>
-<p>mkfs.ext4</p>
+#文件格式化
+mkfs.ext4
 
-<p>#挂载</p>
-<p>创建目录</p>
-<p>mkdir 目录	</p>
+#挂载
+创建目录
+mkdir 目录	
 
-<p>mount 磁盘 挂载点（目录）</p>
+mount 磁盘 挂载点（目录）
 
-<p>进行卸载时</p>
-<p>umount 目录</p>
+进行卸载时
+umount 目录
 
-<p>#自动挂载配置</p>
-<p>fstab</p>
-<p>vim /etc/fstab	#编写内容</p>
+#自动挂载配置
+fstab
+vim /etc/fstab	#编写内容
 
-<p>mount -a </code></pre></p>
+mount -a </code></pre>
 </div>
 
 <footer class="footer">

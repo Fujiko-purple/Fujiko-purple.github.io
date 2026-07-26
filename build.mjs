@@ -7,30 +7,129 @@ const CONTENT = join(ROOT, 'content');
 const TEMPLATES = join(ROOT, 'templates');
 const DIST = join(ROOT, 'dist');
 
-function mdToHtml(md) {
-  let html = md
-    .replace(/```(\w*)\r?\n([\s\S]*?)\r?\n```/g, (_, lang, code) => {
-      return '<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + esc(code) + '</code></pre>';
-    })
-    .replace(/^\r?\n?---\r?\n?/gm, '<hr>')
-    .replace(/^###### (.+)$/gm, '<h6>$1</h6>')
-    .replace(/^##### (.+)$/gm, '<h5>$1</h5>')
-    .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-    .replace(/^\* (.+)$/gm, '<li>$1</li>')
-    .replace(/^- (.+)$/gm, '<li>$1</li>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`(.+?)`/g, '<code>$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-    .replace(/!\[(.*?)\]\((.+?)\)/g, '<img src="$2" alt="$1">');
-  html = html.replace(/^(?!<[hHpPuUoObBli]|<\/|<pre|\s|$)(.+)$/gm, '<p>$1</p>');
-  return html;
-}
+// ============ Markdown 转 HTML（自制解析器，零依赖） ============
+// 支持的语法子集：
+//   标题 #~######、围栏代码块 ```、无序列表 -/*、有序列表 1.（均支持嵌套，2 空格一层）、
+//   表格（| a | b | 形式，需分隔行）、引用 >、分割线 ---、图片/链接、粗体/斜体/行内代码
+// 手写 HTML 行（以 < 开头）和 {{占位符}} 行原样输出，不做转义
+// 添加新语法前请先在此扩展，勿在笔记中使用未支持的格式
+
 function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// 行内格式：先保护行内代码（内容转义，防止 < > 破坏页面），再处理图片/链接/粗斜体
+function inline(text) {
+  const codes = [];
+  let t = text.replace(/`([^`]+)`/g, (_, c) => {
+    codes.push('<code>' + esc(c) + '</code>');
+    return '\u0000C' + (codes.length - 1) + '\u0000';
+  });
+  t = t
+    .replace(/!\[(.*?)\]\((.+?)\)/g, '<img src="$2" alt="$1">')
+    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+  return t.replace(/\u0000C(\d+)\u0000/g, (_, n) => codes[n]);
+}
+
+function mdToHtml(md) {
+  md = md.replace(/\r/g, '');
+
+  // 第一步：提取围栏代码块为占位符，避免代码内容被当作 Markdown 解析
+  const blocks = [];
+  md = md.replace(/```(\w*)\n([\s\S]*?)\n?```/g, (_, lang, code) => {
+    blocks.push('<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + esc(code) + '</code></pre>');
+    return '\u0000B' + (blocks.length - 1) + '\u0000';
+  });
+
+  const lines = md.split('\n');
+  const out = [];
+
+  // 列表状态栈：每层记录列表类型和当前 <li> 是否未闭合（子列表要嵌在父 <li> 内部）
+  const stack = [];
+  function closeLevel() {
+    const top = stack.pop();
+    out.push((top.liOpen ? '</li>' : '') + '</' + top.type + '>');
+  }
+  function closeAllLists() { while (stack.length) closeLevel(); }
+
+  // 引用缓冲：连续的 > 行合并为同一个 blockquote
+  let quoteBuf = [];
+  function flushQuote() {
+    if (quoteBuf.length) {
+      out.push('<blockquote>' + quoteBuf.join('<br>') + '</blockquote>');
+      quoteBuf = [];
+    }
+  }
+
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+
+    // ---- 表格：| a | b | 行，且下一行是 |---|---| 分隔行 ----
+    if (/^\s*\|(.+)\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i + 1])) {
+      closeAllLists(); flushQuote();
+      const cells = l => l.trim().slice(1, -1).split('|').map(c => inline(c.trim()));
+      let t = '<table><thead><tr>' + cells(line).map(c => '<th>' + c + '</th>').join('') + '</tr></thead><tbody>';
+      i += 2;
+      while (i < lines.length && /^\s*\|(.+)\|\s*$/.test(lines[i])) {
+        t += '<tr>' + cells(lines[i]).map(c => '<td>' + c + '</td>').join('') + '</tr>';
+        i++;
+      }
+      out.push(t + '</tbody></table>');
+      continue;
+    }
+
+    // ---- 列表项：-/* 为无序，"数字." 为有序，缩进每 2 空格深一层 ----
+    const lm = line.match(/^(\s*)(?:([-*])|(\d+)\.) (.+)$/);
+    if (lm) {
+      flushQuote();
+      const depth = Math.floor(lm[1].replace(/\t/g, '  ').length / 2);
+      const type = lm[2] ? 'ul' : 'ol';
+      while (stack.length > depth + 1) closeLevel();
+      if (stack.length === depth + 1 && stack[stack.length - 1].type !== type) closeLevel();
+      while (stack.length < depth + 1) {
+        out.push('<' + type + '>');
+        stack.push({ type, liOpen: false });
+      }
+      const top = stack[stack.length - 1];
+      if (top.liOpen) out.push('</li>');
+      out.push('<li>' + inline(lm[4]));
+      top.liOpen = true;
+      i++;
+      continue;
+    }
+
+    // ---- 引用行 ----
+    const qm = line.match(/^> ?(.*)$/);
+    if (qm) { closeAllLists(); quoteBuf.push(inline(qm[1])); i++; continue; }
+    flushQuote();
+
+    // ---- 空行：结束当前列表 ----
+    if (/^\s*$/.test(line)) { closeAllLists(); i++; continue; }
+    closeAllLists();
+
+    // ---- 标题 ----
+    const hm = line.match(/^(#{1,6}) (.+)$/);
+    if (hm) { out.push('<h' + hm[1].length + '>' + inline(hm[2]) + '</h' + hm[1].length + '>'); i++; continue; }
+
+    // ---- 分割线 ----
+    if (/^-{3,}\s*$/.test(line)) { out.push('<hr>'); i++; continue; }
+
+    // ---- 代码块占位符 / {{模板占位符}} / 手写 HTML 行：原样输出 ----
+    if (/^\u0000B\d+\u0000$/.test(line.trim()) || /^\{\{[A-Z_]+\}\}$/.test(line.trim()) || /^</.test(line)) {
+      out.push(line); i++; continue;
+    }
+
+    // ---- 普通段落：每行一个 <p> ----
+    out.push('<p>' + inline(line) + '</p>');
+    i++;
+  }
+  closeAllLists();
+  flushQuote();
+
+  // 最后一步：恢复围栏代码块
+  return out.join('\n').replace(/\u0000B(\d+)\u0000/g, (_, n) => blocks[n]);
+}
 
 function parseFM(text) {
   let cat='';
@@ -61,7 +160,8 @@ const CAT_NAMES = { 'python':'Python', 'database':'数据库', 'linux':'Linux', 
 
 function build() {
   console.log('Building site...\n');
-  const tpl = readFileSync(join(TEMPLATES, 'page.html'), 'utf-8');
+  // 统一为 LF：保证本地（Windows）和 CI（Linux）构建产物字节级一致
+  const tpl = readFileSync(join(TEMPLATES, 'page.html'), 'utf-8').replace(/\r\n/g, '\n');
 
   for (const [dk, sec] of Object.entries(SECTIONS)) {
     const sdir = join(CONTENT, dk);

@@ -23,145 +23,102 @@
   <h1>LVM逻辑卷管理</h1>
   <div class="meta"></div>
   <h2>LVM核心组卷</h2>
-
 <p>物理卷PV</p>
 <p>实际硬盘分区 类似砖块</p>
-
 <p>卷组VG</p>
 <p>由多个物理卷组成的卷池 类似砖块砌成的墙</p>
-
 <p>逻辑卷LV</p>
 <p>从卷组中划分的分区 类似从墙上划分的房间</p>
-
 <p>查找是否安装逻辑卷</p>
-
 <pre><code class="language-shell">rpm -qa | grep lvm2
 
-<p>yum -y install lvm2	#安装</code></pre></p>
-
+yum -y install lvm2	#安装</code></pre>
 <pre><code class="language-shell">lsblk	#查看磁盘情况</code></pre>
-
 <img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251212170436455.png" alt="image-20251212170436455" style="zoom:50%;" />
-
 <p>在设置中 添加->下一步->默认->大小设置->点击完成 硬盘添加成功</p>
-
 <pre><code class="language-shell">#初始为磁盘 要创建成物理卷
-<p>pvcreate /dev/磁盘名称</p>
+pvcreate /dev/磁盘名称
 
-<p>pvs	#查看简略信息</p>
+pvs	#查看简略信息
 
-<p>pvdisplay	#查看详细信息</code></pre></p>
-
+pvdisplay	#查看详细信息</code></pre>
 <pre><code class="language-shell">#创建卷组
-<p>vgcreate 卷组名 /dev/物理卷</p>
+vgcreate 卷组名 /dev/物理卷
 
-<p>vgs	#简略查看</p>
+vgs	#简略查看
 
-<p>vgdisplay	#详细查看</code></pre></p>
-
+vgdisplay	#详细查看</code></pre>
 <pre><code class="language-shell">#创建逻辑卷
-<p>lvcreate -L 3G -n lv_mysql 卷组名</p>
-<p>-L 定义容量大小</p>
-<p>-n 赋予名称</p>
+lvcreate -L 3G -n lv_mysql 卷组名
+-L 定义容量大小
+-n 赋予名称
 
-<p>lvs	#查看简略信息</p>
+lvs	#查看简略信息
 
-<p>lvdisplay	#查看详细信息</p>
+lvdisplay	#查看详细信息
 </code></pre>
-
 <pre><code class="language-shell">#格式化逻辑卷
-<p>mkfs.xfs /dev/卷组名/逻辑卷名</code></pre></p>
-
+mkfs.xfs /dev/卷组名/逻辑卷名</code></pre>
 <pre><code class="language-shell">#格式化后 创建目录并挂载
-<p>mkdir 创建目录</p>
+mkdir 创建目录
 
-<p>mount /dev/卷组名/逻辑卷名 挂载的目录</p>
+mount /dev/卷组名/逻辑卷名 挂载的目录
 
-<p>df -h	#查看是否挂载成功</code></pre></p>
-
+df -h	#查看是否挂载成功</code></pre>
 <pre><code class="language-shell">#启动自动挂载
-<p>vim /etc/fstab</p>
+vim /etc/fstab
 
-<p>/dev/vg_data/lv_mysql   /mnt/mysql_data xfs.defaults    0 0</p>
+/dev/vg_data/lv_mysql   /mnt/mysql_data xfs.defaults    0 0
 
-<p>mount -a </p>
-<p>#没有报错 说明挂载成功</code></pre></p>
-<hr>---
-
-
-
+mount -a 
+#没有报错 说明挂载成功</code></pre>
+<hr>
 <h2>动态扩展逻辑卷</h2>
-
 <pre><code class="language-shell">#扩容卷组
-<p>vgextend 已经存在的卷组 /dev/要扩容的磁盘</p>
-<p>pvs	#查看扩容是否成功</p>
+vgextend 已经存在的卷组 /dev/要扩容的磁盘
+pvs	#查看扩容是否成功
 
-<p>#扩容逻辑卷</p>
-<p>lvextend -L +2G /dev/vg_data/lv_mysql#要扩容的逻辑卷</p>
+#扩容逻辑卷
+lvextend -L +2G /dev/vg_data/lv_mysql#要扩容的逻辑卷
 
-<p>#进行格式化</p>
-<p>xfs_growfs /dev/vg_data/lv_mysql</p>
+#进行格式化
+xfs_growfs /dev/vg_data/lv_mysql
 
-<p>df -h	#查看逻辑卷是否扩容成功</code></pre></p>
-<hr>---
-
-
-
+df -h	#查看逻辑卷是否扩容成功</code></pre>
+<hr>
 <h2>缩减逻辑卷</h2>
-
 <h3>1.卸载文件系统</h3>
-
 <pre><code class="language-shell">umount /dev/挂载的文件
-<p>df -h	#查看是否卸载成功</code></pre></p>
-
-
-
+df -h	#查看是否卸载成功</code></pre>
 <h3>2.强制检查文件系统</h3>
-
 <pre><code class="language-shell">e2fsck -f /dev/卷组名/逻辑卷名</code></pre>
-
-
-
 <h3>3.调整文件系统大小</h3>
-
 <pre><code class="language-shell">resize2fs /dev/vg_data/lv_chenlei 3G
-<p>调整大小的命令：resize2fs </p>
-<p>卷组名/逻辑卷名</code></pre></p>
-
-
-
+调整大小的命令：resize2fs 
+卷组名/逻辑卷名</code></pre>
 <h3>4.调整逻辑卷大小</h3>
-
 <pre><code class="language-shell">lvreduce -L 4G /dev/vg_data/lv_chenlei 
-<p>缩减4G</code></pre></p>
-
+缩减4G</code></pre>
 <h3>5.重新挂载逻辑卷</h3>
-
 <pre><code class="language-shell">mount 挂载的目录
-<p>df -h</code></pre></p>
-<hr>---
-
-
-
+df -h</code></pre>
+<hr>
 <h2>创建逻辑卷快照卷</h2>
-
-
-
 <pre><code class="language-shell">#删除逻辑卷
-<p>lvs</p>
-<p>lvremove /dev/vg_data/lv_mysql /dev/vg_data/lv_chenlei</p>
-<p>#可以同时删除多个逻辑卷</p>
+lvs
+lvremove /dev/vg_data/lv_mysql /dev/vg_data/lv_chenlei
+#可以同时删除多个逻辑卷
 
-<p>#删除卷组</p>
-<p>vgs</p>
-<p>vgremove 卷组名字</p>
+#删除卷组
+vgs
+vgremove 卷组名字
 
-<p>#删除物理卷</p>
-<p>pvs</p>
-<p>pyremove /dev/物理卷名字</p>
+#删除物理卷
+pvs
+pyremove /dev/物理卷名字
 
-<p>lsblk	#查看磁盘</p>
-<p>#通过设置来移除磁盘</code></pre></p>
+lsblk	#查看磁盘
+#通过设置来移除磁盘</code></pre>
 </div>
 
 <footer class="footer">

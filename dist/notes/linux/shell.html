@@ -23,59 +23,47 @@
   <h1>shell</h1>
   <div class="meta"></div>
   <h2>基本语法</h2>
-
 <pre><code class="language-shell">第一步：新建脚本文件
-<p>vim 文件名.sh</p>
+vim 文件名.sh
 
-<p>第二步:定义脚本解释器 注释说明</p>
-<p>#!/bin/bash</p>
+第二步:定义脚本解释器 注释说明
+#!/bin/bash
 
-<p>第三步；编写脚本内容</p>
+第三步；编写脚本内容
 
-<p>第四步：添加权限</p>
-<p>chmod +x 文件名.sh</p>
-<p>#添加执行权限</p>
+第四步：添加权限
+chmod +x 文件名.sh
+#添加执行权限
 
-<p>第五步：运行脚本</p>
-<p>./脚本名字</p>
+第五步：运行脚本
+./脚本名字
 
-<p>bash 脚本名字	#不需要权限也可以运行</code></pre></p>
-
+bash 脚本名字	#不需要权限也可以运行</code></pre>
 <h2>if条件判断</h2>
-
 <pre><code class="language-shell">if [ ]; then
 
-<p>else</p>
+else
 
-<p>fi</p>
+fi
 
-<p>常用指令：</p>
-<p>-d	：检查输入是否是目录</p>
-<p>-f	：检查文件</code></pre></p>
-
+常用指令：
+-d	：检查输入是否是目录
+-f	：检查文件</code></pre>
 <h2>for循环</h2>
-
 <pre><code class="language-shell">for i in ; do
 
-<p>done</p>
+done
 
-<p>#do指开始 done指结束</code></pre></p>
-
+#do指开始 done指结束</code></pre>
 <h2>while循环</h2>
-
 <pre><code></code></pre>
-
-
-
 <h2>基础用法</h2>
-
 <h3>使用echo命令</h3>
-
 <pre><code class="language-shell">#基本输出功能
-<p>echo -e		#控制格式</p>
-<p>\n		#换行</p>
+echo -e		#控制格式
+\n		#换行
 
-<p>#输出重定向</p>
+#输出重定向
 	标准重定向
 		输出的内容 &gt; 输入的文件
 			#会将输出的内容覆盖掉输入的文件内容
@@ -88,28 +76,26 @@
 	同时重定向标准输出和错误输出
 		&amp;&gt;
 			#会将错误的正确的信息同时输出重定向</code></pre>
-
 <h3>变量的使用</h3>
-
 <pre><code class="language-shell">#变量赋值
-<p>var=value</p>
+var=value
 
-<p>#变量使用方法 ： 在变量名前加上$</p>
-<p>ehco $var</p>
-<p>#输出value</p>
+#变量使用方法 ： 在变量名前加上$
+ehco $var
+#输出value
 
-<p>#位置参数</p>
-<p>$1</p>
-<p>$2</p>
-<p>$3</p>
-<p>bash demo.sh 陈雷 阿彪 阿丽</p>
+#位置参数
+$1
+$2
+$3
+bash demo.sh 陈雷 阿彪 阿丽
 
-<p>这是第一个变量 陈雷</p>
-<p>这是第二个变量 阿彪</p>
-<p>这是第三个变量 阿丽</p>
+这是第一个变量 陈雷
+这是第二个变量 阿彪
+这是第三个变量 阿丽
 
-<p>#特殊变量</p>
-<p>echo $?</p>
+#特殊变量
+echo $?
 	表示上一个命令的退出状态
 	0通常表示成功
 	非0通常表示失败</code></pre>

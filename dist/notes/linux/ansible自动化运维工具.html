@@ -23,46 +23,40 @@
   <h1>ansible自动化运维工具</h1>
   <div class="meta"></div>
   <pre><code class="language-shell">#安装epel仓库
-<p>yum install epel-release -y</p>
+yum install epel-release -y
 
-<p>#安装ansible</p>
-<p>yum -y install ansible</p>
+#安装ansible
+yum -y install ansible
 
-<p>#验证安装完成</p>
-<p>ansible --version	#安装版本 位置等等信息</p>
+#验证安装完成
+ansible --version	#安装版本 位置等等信息
 
-<p>#ansible配置文件 ansible.cfg 在 /etc/ansible/</p>
-<p>#添加被管控节点的IP地址</p>
-<p>vim /hosts</p>
-<p>#添加受控节点的信息</p>
+#ansible配置文件 ansible.cfg 在 /etc/ansible/
+#添加被管控节点的IP地址
+vim /hosts
+#添加受控节点的信息
 </code></pre>
-
 <h2>ssh免密登录</h2>
-
 <pre><code class="language-shell">#配置密钥对
-<p>ssh-keygen -t rsa</p>
-<p>#会生成路径</p>
+ssh-keygen -t rsa
+#会生成路径
 
-<p>cd #路径</p>
-<p>ls</p>
-<p>#公钥和私钥</p>
+cd #路径
+ls
+#公钥和私钥
 
-<p>#将公钥分发到所有被管理服务器</p>
-<p>ssh-copy-id</p>
-<p>root@IP地址</p>
-<p>#输入目标服务器密码</p>
+#将公钥分发到所有被管理服务器
+ssh-copy-id
+root@IP地址
+#输入目标服务器密码
 
-<p>#测试免密登录</p>
-<p>ssh root@IP地址</p>
-<p>#不输入密码直接进入即成功</p>
+#测试免密登录
+ssh root@IP地址
+#不输入密码直接进入即成功
 
-<p>#查看</p>
-<p>ansible all -m ping</code></pre></p>
-
-
-
+#查看
+ansible all -m ping</code></pre>
 <h2>ansible常用配置</h2>
-
 <pre><code></code></pre>
 </div>
 

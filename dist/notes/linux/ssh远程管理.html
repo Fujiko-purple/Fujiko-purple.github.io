@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>End of file - Fujiko</title>
+  <title>ssh远程管理 - Fujiko</title>
   <link rel="stylesheet" href="../../../style.css">
 </head>
 <body>
@@ -20,62 +20,53 @@
 </div>
 
 <div class="content-page">
-  <h1>End of file</h1>
+  <h1>ssh远程管理</h1>
   <div class="meta"></div>
   <h2>禁止root登录</h2>
-
 <pre><code class="language-shell">#在root账号下
-<p>vim /etc/ssh/sshd_config</p>
+vim /etc/ssh/sshd_config
 
-<p>#修改PermitRootLogin</p>
-<p>PermitRootLogin no	#取消注释</p>
+#修改PermitRootLogin
+PermitRootLogin no	#取消注释
 
-<p>#重启</p>
-<p>systemctl restart sshd</p>
+#重启
+systemctl restart sshd
 
-<p>#此时禁止root远程登录</code></pre></p>
-
+#此时禁止root远程登录</code></pre>
 <h2>限制并发数</h2>
-
 <pre><code class="language-shell">vim /etc/security/limits.conf
 
-<p>#在最后一行修改</p>
-<p>root    hard    maxlogins       3</p>
-<p>#表示限制最大登录root数为3个</p>
+#在最后一行修改
+# End of file
+root    hard    maxlogins       3
+#表示限制最大登录root数为3个
 
-<p>#重启</p>
-<p>systemctl restart sshd</p>
+#重启
+systemctl restart sshd
 
-<p>#查看登录的数量</p>
-<p>w</p>
+#查看登录的数量
+w
 
-<p>#限制时 没有限制秘钥的并发数</p>
-<p>#只限制密码登录并发数</code></pre></p>
-
+#限制时 没有限制秘钥的并发数
+#只限制密码登录并发数</code></pre>
 <h2>超时退出设置</h2>
-
 <pre><code class="language-shell">vim /etc/ssh/sshd_config
 
-<p>ClientAliveInterval 设置超时的时间</p>
+ClientAliveInterval 设置超时的时间
 
-<p>#全局会话的超时限制</p>
-<p>vim /etc/profile</p>
-<p>#在最底下添加</p>
-<p>export TMOUT=3600	#没有操作的时间超过了3600秒就会退出</p>
+#全局会话的超时限制
+vim /etc/profile
+#在最底下添加
+export TMOUT=3600	#没有操作的时间超过了3600秒就会退出
 
-<p>source /etc/profile	#重启文件</code></pre></p>
-
+source /etc/profile	#重启文件</code></pre>
 <h2> 密码复杂度设置</h2>
-
 <pre><code></code></pre>
-
 <h2>密码时效性设置</h2>
-
 <pre><code class="language-shell">vim /etc/login.defs
-<p>PASS_MAX_DAYS   99999 #密码最长有效期</p>
-<p>PASS_MIN_DAYS   0	#最小修改天数间隔</p>
-<p>PASS_WARN_AGE   7	#过期前多少天提醒修改密码</code></pre></p>
-
+PASS_MAX_DAYS   99999 #密码最长有效期
+PASS_MIN_DAYS   0	#最小修改天数间隔
+PASS_WARN_AGE   7	#过期前多少天提醒修改密码</code></pre>
 <p>##</p>
 </div>
 

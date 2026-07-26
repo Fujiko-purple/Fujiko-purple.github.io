@@ -23,35 +23,27 @@
   <h1>服务管理</h1>
   <div class="meta"></div>
   <h2>systemd</h2>
-
 <pre><code class="language-shell">#服务启动停止
 
-<p>#启动	</p>
-<p>systemctl start 服务名</p>
+#启动	
+systemctl start 服务名
 
-<p>#停止</p>
-<p>systemctl stop 服务名</p>
+#停止
+systemctl stop 服务名
 
-<p>#重启</p>
-<p>systemctl restart 服务名</p>
+#重启
+systemctl restart 服务名
 
-<p>#重载</p>
-<p>systemctl roload 服务名</code></pre></p>
-
-
-
+#重载
+systemctl roload 服务名</code></pre>
 <h2>查看服务日志</h2>
-
 <pre><code class="language-shell">journalctl
 
-<p>journalctl -u 服务名</p>
+journalctl -u 服务名
 
-<p>journactl -f 	#用于监控实时日记</p>
+journactl -f 	#用于监控实时日记
 
-<p>journalctl --since "开始时间" --until "结束时间"	#特定时间段日记</code></pre></p>
-
-
-
+journalctl --since "开始时间" --until "结束时间"	#特定时间段日记</code></pre>
 <h2>自定义服务单元</h2>
 </div>
 
