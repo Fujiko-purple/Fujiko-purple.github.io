@@ -55,14 +55,15 @@ function highlightCode(raw, lang) {
   const parts = [];
   if (cfg.block) parts.push('\\/\\*[\\s\\S]*?\\*\\/');
   if (cfg.line === '//') parts.push('\\/\\/[^\\n]*');
-  else if (cfg.line === '#') parts.push('#[^\\n]*');
+  else if (cfg.line === '#') parts.push('(?<![$\\w{])#[^\\n]*');
   else if (cfg.line === '--') parts.push('--[^\\n]*');
   parts.push('"(?:[^"\\\\\\n]|\\\\.)*"', "'(?:[^'\\\\\\n]|\\\\.)*'");
   const extractRe = new RegExp(parts.join('|'), 'g');
   let s = raw.replace(extractRe, m =>
     hold(m, (m[0] === '"' || m[0] === "'") ? 'tok-s' : 'tok-c'));
 
-  const kwRe = new RegExp('\\b(' + cfg.kw.join('|') + ')\\b', cfg.ci ? 'gi' : 'g');
+  // 环视排除路径(/usr/local)、长选项(--until)、变量($local)、成员(.local)等上下文
+  const kwRe = new RegExp('(?<![-/\\w.$])(' + cfg.kw.join('|') + ')(?![-/\\w])', cfg.ci ? 'gi' : 'g');
   // 按占位符分段：只对普通代码段做转义+染色，避免破坏占位符里的数字
   s = s.split(/(\u0000\d+\u0000)/).map(seg => {
     if (/^\u0000\d+\u0000$/.test(seg)) return seg;
@@ -82,11 +83,13 @@ function inline(text) {
     codes.push('<code>' + esc(c) + '</code>');
     return '\u0000C' + (codes.length - 1) + '\u0000';
   });
-  t = t
+  // 行内代码占位后，其余正文整体转义：裸写 < > & 不再被浏览器当标签吞掉
+  t = esc(t)
     .replace(/!\[(.*?)\]\((.+?)\)/g, '<img src="$2" alt="$1">')
     .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>');
+    // 强调语法带边界约束：乘法 a*b、O(n*m) 等孤立星号不再误配斜体
+    .replace(/(?<![\w*])\*\*([^*]+?)\*\*(?![\w*])/g, '<strong>$1</strong>')
+    .replace(/(?<![\w*])\*([^*\s](?:[^*]*[^*\s])?)\*(?![\w*])/g, '<em>$1</em>');
   return t.replace(/\u0000C(\d+)\u0000/g, (_, n) => codes[n]);
 }
 
@@ -95,10 +98,15 @@ function mdToHtml(md) {
 
   // 第一步：提取围栏代码块为占位符，避免代码内容被当作 Markdown 解析
   const blocks = [];
-  md = md.replace(/```(\w*)\n([\s\S]*?)\n?```/g, (_, lang, code) => {
-    blocks.push('<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + highlightCode(code, lang.toLowerCase()) + '</code></pre>');
+  const pushBlock = (info, code) => {
+    const lang = (info.trim().split(/\s+/)[0] || '').toLowerCase();
+    blocks.push('<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + highlightCode(code, lang) + '</code></pre>');
     return '\u0000B' + (blocks.length - 1) + '\u0000';
-  });
+  };
+  // 锚定行首；开围栏允许带 info string（如 java title=x）；闭围栏允许尾随空格
+  md = md.replace(/^```([^\n]*)\n([\s\S]*?)\n?^```[ \t]*$/gm, (_, info, code) => pushBlock(info, code));
+  // 兜底：残留的未闭合围栏，从开围栏到文末整体按代码块处理，避免代码被当 Markdown 解析
+  md = md.replace(/^```([^\n]*)\n([\s\S]*)$/m, (_, info, code) => pushBlock(info, code));
 
   const lines = md.split('\n');
   const out = [];
@@ -127,11 +135,27 @@ function mdToHtml(md) {
     // ---- 表格：| a | b | 行，且下一行是 |---|---| 分隔行 ----
     if (/^\s*\|(.+)\|\s*$/.test(line) && i + 1 < lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i + 1])) {
       closeAllLists(); flushQuote();
-      const cells = l => l.trim().slice(1, -1).split('|').map(c => inline(c.trim()));
-      let t = '<table><thead><tr>' + cells(line).map(c => '<th>' + c + '</th>').join('') + '</tr></thead><tbody>';
+      // 拆列前先保护行内代码里的 | 和转义写法 \|，避免单元格被错切
+      const cells = l => {
+        const guards = [];
+        let t2 = l.trim().replace(/^\||\|$/g, '');
+        t2 = t2.replace(/`[^`]*`/g, m => { guards.push(m.replace(/\\\|/g, '|')); return '\u0001G' + (guards.length - 1) + '\u0001'; });
+        t2 = t2.replace(/\\\|/g, '\u0001P\u0001');
+        return t2.split('|').map(c =>
+          inline(c.replace(/\u0001P\u0001/g, '|').replace(/\u0001G(\d+)\u0001/g, (_, n) => guards[n]).trim()));
+      };
+      // 分隔行的 :--: 语法决定各列对齐
+      const aligns = lines[i + 1].trim().replace(/^\||\|$/g, '').split('|').map(c => {
+        c = c.trim();
+        if (/^:-+:$/.test(c)) return ' style="text-align:center"';
+        if (/^-+:$/.test(c)) return ' style="text-align:right"';
+        return '';
+      });
+      const rowHtml = (l, tag) => '<tr>' + cells(l).map((c, k) => '<' + tag + (aligns[k] || '') + '>' + c + '</' + tag + '>').join('') + '</tr>';
+      let t = '<table><thead>' + rowHtml(line, 'th') + '</thead><tbody>';
       i += 2;
       while (i < lines.length && /^\s*\|(.+)\|\s*$/.test(lines[i])) {
-        t += '<tr>' + cells(lines[i]).map(c => '<td>' + c + '</td>').join('') + '</tr>';
+        t += rowHtml(lines[i], 'td');
         i++;
       }
       out.push(t + '</tbody></table>');
@@ -168,9 +192,18 @@ function mdToHtml(md) {
     if (qm) { closeAllLists(); quoteBuf.push(inline(qm[1])); i++; continue; }
     flushQuote();
 
-    // ---- 空行：结束当前列表 ----
-    if (/^\s*$/.test(line)) { closeAllLists(); i++; continue; }
+    // ---- 空行：若下一个非空行仍是列表项则保持列表打开（空行分隔的有序列表编号不重置） ----
+    if (/^\s*$/.test(line)) {
+      let j = i + 1;
+      while (j < lines.length && /^\s*$/.test(lines[j])) j++;
+      const nextIsList = j < lines.length && /^(\s*)(?:[-*]|\d+\.) /.test(lines[j]);
+      if (!(stack.length && nextIsList)) closeAllLists();
+      i++; continue;
+    }
     closeAllLists();
+
+    // ---- 空标题（如「## 」）：忽略该行，不裸露井号 ----
+    if (/^#{1,6}\s*$/.test(line)) { i++; continue; }
 
     // ---- 标题 ----
     const hm = line.match(/^(#{1,6}) (.+)$/);
@@ -198,8 +231,9 @@ function mdToHtml(md) {
 function parseFM(text) {
   let cat='';
   let title='', date='', body=text;
-  if (text.startsWith('---')) {
-    const e = text.indexOf('---',3);
+  if (/^---\r?\n/.test(text)) {
+    const em = text.match(/\r?\n---[ \t]*(?:\r?\n|$)/);
+    const e = em ? em.index : -1;
     if (e>0) {
       const fm = text.slice(3,e).trim();
       body = text.slice(e+3).trim();
@@ -269,13 +303,14 @@ function processFiles(srcDir, outDir, depth, tpl, sec, dk, articles) {
       const outName = (entry.name === '_index.md') ? 'index.html' : basename(entry.name, '.md') + '.html';
       const outRel = join(outDir.replace(DIST+'\\', '').replace(DIST+'/', ''), outName);
       
+      // 替换值一律用函数形式提供：值中的 $& $` 等字符不会被 replaceAll 当替换模式展开
       let pg = tpl
-        .replaceAll('{{TITLE}}', pt)
-        .replaceAll('{{DATE}}', pd)
-        .replaceAll('{{CONTENT}}', bhtml)
-        .replaceAll('{{SECTION_NAME}}', sec.name)
-        .replaceAll('{{SECTION_INDEX}}', rootDir + dk + '/index.html')
-        .replaceAll('{{ROOT}}', rootDir);
+        .replaceAll('{{TITLE}}', () => pt)
+        .replaceAll('{{DATE}}', () => pd)
+        .replaceAll('{{CONTENT}}', () => bhtml)
+        .replaceAll('{{SECTION_NAME}}', () => sec.name)
+        .replaceAll('{{SECTION_INDEX}}', () => rootDir + dk + '/index.html')
+        .replaceAll('{{ROOT}}', () => rootDir);
 
       writeFileSync(join(outDir, outName), pg, 'utf-8');
 
@@ -312,8 +347,7 @@ function injectArticleLists(srcDir, outDir, dk) {
       groups[g].push(a);
     }
     for (const [g, items] of Object.entries(groups)) {
-      // 组内按日期降序（新笔记在前）；无日期的排最后，同日期保持文件名序
-      items.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      // 组内保持文件名顺序（目录读取序）：算法笔记按 01、02… 编号排列最直观
       const heading = CAT_NAMES[g] || g;
       const open = '';
       listHtml += '<details class="cat-group"' + open + '>';
@@ -333,7 +367,7 @@ function injectArticleLists(srcDir, outDir, dk) {
   if (dk === 'notes' && outDir === join(DIST, 'notes') && articles.length > 0) {
     listHtml = buildSearchBlock(articles, listHtml);
   }
-  idx = idx.replace('{{ARTICLE_LIST}}', listHtml);
+  idx = idx.replace('{{ARTICLE_LIST}}', () => listHtml);
   writeFileSync(indexPath, idx, 'utf-8');
   const rel = outDir.replace(DIST+'\\', '').replace(DIST+'/', '');
   console.log('  \u279c Updated article list in ' + rel + '/index.html');

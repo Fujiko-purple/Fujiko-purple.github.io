@@ -61,7 +61,7 @@ node build.mjs   # 全量构建：清空 dist/ → 拷入 site/ 骨架 → 渲�
 **两遍处理**：
 
 1. `processFiles()` 递归遍历分区目录，把每个 `.md` 渲染成 HTML（`_index.md` → `index.html`），并收集文章元数据；取 front matter 的 `title` 或正文第一个 h1 作为标题（该 h1 会从正文移除，避免与模板重复）
-2. `injectArticleLists()` 向每一级目录 `index.html` 的 `{{ARTICLE_LIST}}` 占位符注入文章列表——按 `category` 自动分组，组内按日期降序，`<details>` 折叠展示（默认收起），组名映射在 `CAT_NAMES` 常量
+2. `injectArticleLists()` 向每一级目录 `index.html` 的 `{{ARTICLE_LIST}}` 占位符注入文章列表——按 `category` 自动分组，组内按文件名顺序（算法笔记即 01、02… 编号序），`<details>` 折叠展示（默认收起），组名映射在 `CAT_NAMES` 常量
 
 **构建时代码高亮**（`highlightCode()`，零依赖自制）：支持 java / python / shell / sql（别名见 `LANG_ALIAS`），注释与字符串单遍交替提取，关键字/数字分段染色，颜色由色卡变量 `--tok-*` 控制。新语言在 `LANGS` 加词表即可。
 
@@ -187,7 +187,7 @@ git add . && git commit -m "笔记: xxx" && git push
 - [x] 支持 YAML Front Matter（title、date、category）
 - [x] 文章列表按 category 自动分组、折叠展示
 - [x] GitHub Actions 自动构建部署
-- [x] 文章列表按日期排序
+- ~~文章列表按日期排序~~（试用后回退：编号笔记按日期排会打乱 01、02… 顺序，文件名序更直观）
 - [x] 站内搜索（学习笔记分区）
 - [x] 深色模式（跟随系统 + 手动切换）
 - [x] 构建时代码高亮（java/python/shell/sql）
