@@ -36,6 +36,16 @@ jobs:
       - name: 构建全站
         run: node build.mjs
 
+      # 强制部署源为 "GitHub Actions"：仓库此前是「从分支部署」（Jekyll），
+      # 两套部署会竞争且 Jekyll 覆盖本工作流的产物；切换后 Jekyll 不再触发
+      - name: 切换 Pages 部署源为 GitHub Actions
+        run: |
+          curl -sf -X PUT \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pages" \
+            -d '{"build_type":"workflow"}'
+
       - name: 配置 Pages
         uses: actions/configure-pages@v5
         with:
