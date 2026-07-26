@@ -154,6 +154,15 @@ git add . && git commit -m "笔记: xxx" && git push
 
 ---
 
+## 项目 Skills（Claude Code）
+
+`.claude/skills/` 下有两个项目级技能，覆盖日常写作闭环：
+
+| Skill | 用法 | 做什么 |
+|-------|------|--------|
+| `/publish` | 写完说「发布」即可 | 本地构建 + 链接检查 → 中文提交信息 → 推送 → 等 CI → 验证线上 |
+| `/new-note` | `/new-note linux 防火墙配置` | 建带 front matter 的笔记骨架；新分类自动补 `_index.md` 和 `CAT_NAMES` |
+
 ## 给 AI 助手与开发者的关键约定
 
 1. **零依赖是刻意设计**——不引入 npm 依赖、package.json、CSS 框架
