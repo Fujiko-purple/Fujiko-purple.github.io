@@ -59,7 +59,11 @@ node build.mjs   # 全量构建：清空 dist/ → 拷入 site/ 骨架 → 渲�
 **两遍处理**：
 
 1. `processFiles()` 递归遍历分区目录，把每个 `.md` 渲染成 HTML（`_index.md` → `index.html`），并收集文章元数据；取 front matter 的 `title` 或正文第一个 h1 作为标题（该 h1 会从正文移除，避免与模板重复）
-2. `injectArticleLists()` 向每一级目录 `index.html` 的 `{{ARTICLE_LIST}}` 占位符注入文章列表——按 `category` 自动分组，`<details>` 折叠展示（默认收起），组名映射在 `CAT_NAMES` 常量
+2. `injectArticleLists()` 向每一级目录 `index.html` 的 `{{ARTICLE_LIST}}` 占位符注入文章列表——按 `category` 自动分组，组内按日期降序，`<details>` 折叠展示（默认收起），组名映射在 `CAT_NAMES` 常量
+
+**构建时代码高亮**（`highlightCode()`，零依赖自制）：支持 java / python / shell / sql（别名见 `LANG_ALIAS`），注释与字符串单遍交替提取，关键字/数字分段染色，颜色由色卡变量 `--tok-*` 控制。新语言在 `LANGS` 加词表即可。
+
+**站内搜索**（仅注入学习笔记分区根页）：构建时为每篇笔记生成 300 字纯文本摘要，索引 JSON 内嵌页面，前端多关键词 AND 过滤，无网络请求。
 
 **自制 Markdown 解析器 `mdToHtml()`**（基于行的状态机），仅支持以下语法子集：
 
@@ -148,9 +152,10 @@ git add . && git commit -m "笔记: xxx" && git push
 
 ### 主题定制
 
-- **颜色**：全局 CSS 变量定义在 `site/assets/style.css` 的 `:root`
+- **颜色**：全站颜色集中为色卡变量，浅色在 `site/assets/style.css` 的 `:root`，深色在 `:root[data-theme="dark"]`；首页内联样式中有一份同名子集，改色时两处同步
+- **深色模式**：跟随系统自动切换；文章页顶栏与首页右上角有 🌙/☀️ 手动开关，选择存 localStorage（优先于系统设置）
 - **头像**：`site/assets/avatar.jpeg`，直接替换同名文件即可
-- **代码块配色**：浅灰底（#f5f3f7）+ 紫色文字（#6d28d9）配细边框，行内代码紫字浅紫底；调整改 `.content-page pre` 和 `.content-page code`
+- **代码块配色**：代码块底色/文字用 `--panel`/`--text`，高亮 token 色用 `--tok-k/s/c/n`（关键字/字符串/注释/数字），深浅两套各自定义
 
 ---
 
@@ -180,11 +185,12 @@ git add . && git commit -m "笔记: xxx" && git push
 - [x] 支持 YAML Front Matter（title、date、category）
 - [x] 文章列表按 category 自动分组、折叠展示
 - [x] GitHub Actions 自动构建部署
-- [ ] 文章列表按日期排序
+- [x] 文章列表按日期排序
+- [x] 站内搜索（学习笔记分区）
+- [x] 深色模式（跟随系统 + 手动切换）
+- [x] 构建时代码高亮（java/python/shell/sql）
 - [ ] 标签/分类筛选
-- [ ] 搜索功能
 - [ ] RSS 订阅
-- [ ] 深色模式切换
 - [ ] 构建脚本 watch 模式
 
 ---
