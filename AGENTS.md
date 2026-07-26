@@ -69,7 +69,7 @@ node build.mjs
 4. 注入 `templates/page.html` 模板
 5. 输出到 `dist/` 对应路径
 
-**注意**：`dist/` 是提交到 git 的（GitHub Pages 直接从 dist/ 部署），构建后务必重新生成并提交。
+**部署方式**：push 到 main 后 GitHub Actions（`.github/workflows/deploy.yml`）自动构建并部署 Pages，只需提交 content/ 的修改即可。本地运行 `node build.mjs` 仅用于预览；`dist/` 目前仍在 git 中（保留本地预览能力），提交与否不影响线上结果。
 
 ---
 
@@ -115,9 +115,9 @@ node build.mjs
 
 ## 给 AI 助手的提示
 
-1. **构建后务必运行 `node build.mjs`**，否则对 content/ 的修改不会反映到 dist/
-2. **提交时记得同时提交 content/ 和 dist/ 的变化**
-3. 所有新分区需要在 `content/` 下创建文件夹并包含 `_index.md`
-4. 首页导航链接在 `index.html` 中手动维护，新增分区后记得同步更新导航
-5. 保持设计一致性：不要引入新的 CSS 框架或风格
-6. Markdown 解析器是自制的，不支持所有 CommonMark 语法。在添加新格式前请检查 `build.mjs` 中的 `mdToHtml()` 函数是否支持
+1. **线上部署已由 GitHub Actions 自动完成**，只需提交 content/ 修改并推送；本地 `node build.mjs` 仅用于预览
+2. 所有新分区需要在 `content/` 下创建文件夹并包含 `_index.md`
+3. 首页导航链接在 `index.html` 中手动维护，新增分区后记得同步更新导航
+4. 保持设计一致性：不要引入新的 CSS 框架或风格
+5. Markdown 解析器是自制的（`build.mjs` 中 `mdToHtml()`，基于行的状态机），支持：标题、围栏代码块、无序/有序列表（嵌套，2 空格一层）、表格、引用、分割线、图片/链接、粗斜体/行内代码。添加其他语法前先在解析器中扩展
+6. 换行符统一为 LF（`.gitattributes` 已配置），构建输出也是 LF，勿改动
