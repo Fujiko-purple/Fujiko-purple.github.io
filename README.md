@@ -24,22 +24,24 @@
 ## 项目结构
 
 ```
-┌─ content/              ← ✍️ 内容源：写 Markdown 的地方
-│   ├─ notes/            ← 学习笔记（python/ database/ linux/ algorithm/ 分类）
+┌─ content/              ← ✍️ 内容源：写 Markdown 的地方（62 篇笔记）
+│   ├─ notes/            ← 学习笔记（algorithm/ linux/ python/ database/ 分类）
 │   ├─ novels/           ← 小说创作
 │   ├─ airp/             ← AIRP 体验
 │   └─ .../              ← 可无限扩展的分区
 │
 ├─ site/                 ← 🏗️ 站点骨架
-│   ├─ index.html        ←    首页（手动维护）
+│   ├─ index.html        ←    首页（手动维护，含内联样式+主题脚本）
 │   ├─ templates/        ←    文章页模板（page.html）
-│   └─ assets/           ←    静态资源：style.css、头像、以后所有图片
+│   └─ assets/           ←    静态资源：style.css（色卡+全部样式）、头像、以后所有图片
 │
 ├─ dist/                 ← 📦 构建产物 = 完整站点（不入 git，CI 自动生成部署）
 │
-├─ build.mjs             ← 🔧 构建脚本（全站唯一的「程序」）
+├─ build.mjs             ← 🔧 构建脚本（全站唯一的「程序」，~420 行）
 ├─ .github/workflows/    ← CI：push 后自动构建部署 Pages
-└─ README.md             ← 本文件
+├─ .claude/skills/       ← Claude Code 项目技能：publish / new-note / sync-algo
+├─ 使用手册.md            ← 个人日常操作速查
+└─ README.md             ← 本文件（规范与原理）
 ```
 
 ---
