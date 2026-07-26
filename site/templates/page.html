@@ -106,11 +106,16 @@
     icon();
   }
   icon();
+  var themingTimer;
   b.addEventListener('click', function(){
-    var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
-    document.documentElement.dataset.theme = next;
+    var root = document.documentElement;
+    var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.classList.add('theming');   /* 渐变动画只给点击切换，随后移除 */
+    root.dataset.theme = next;
     localStorage.setItem('theme', next);
     icon();
+    clearTimeout(themingTimer);
+    themingTimer = setTimeout(function(){ root.classList.remove('theming'); }, 300);
   });
   /* 返回/前进从缓存恢复页面时不会重跑初始化脚本，这里重新应用最新主题 */
   window.addEventListener('pageshow', apply);

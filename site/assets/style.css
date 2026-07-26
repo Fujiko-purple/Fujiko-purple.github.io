@@ -60,7 +60,10 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:var(--bg);color:var(--text);line-height:1.8;min-height:100vh;transition:background 0.3s,color 0.3s}
+body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:var(--bg);color:var(--text);line-height:1.8;min-height:100vh}
+/* 主题渐变只在用户点击切换按钮时启用（.theming 由脚本短暂挂上）；
+   返回页面时的主题纠正不带渐变，避免旧主题闪烁 */
+:root.theming body,:root.theming .topbar,:root.theming .content-page *,:root.theming .drawer{transition:background-color 0.25s ease,color 0.25s ease,border-color 0.25s ease}
 .particle{position:fixed;pointer-events:none;border-radius:50%;z-index:0;opacity:0}
 @keyframes floatPetals{
   0%{transform:translateY(0)rotate(0deg)scale(0);opacity:0}
