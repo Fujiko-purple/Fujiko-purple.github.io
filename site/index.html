@@ -115,6 +115,12 @@ body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:var(--bg);c
   var b = document.getElementById('themeToggle');
   if (!b) return;
   function icon(){ b.textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙'; }
+  function apply(){
+    var t = localStorage.getItem('theme');
+    if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+    icon();
+  }
   icon();
   b.addEventListener('click', function(){
     var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -122,6 +128,10 @@ body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:var(--bg);c
     localStorage.setItem('theme', next);
     icon();
   });
+  /* 返回/前进从缓存恢复页面时不会重跑初始化脚本，这里重新应用最新主题 */
+  window.addEventListener('pageshow', apply);
+  /* 其他标签页改了主题，本页同步 */
+  window.addEventListener('storage', function(e){ if (e.key === 'theme') apply(); });
 })();
 </script>
 </body>
