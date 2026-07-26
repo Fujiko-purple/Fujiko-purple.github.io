@@ -64,7 +64,7 @@
 ## 技术架构
 
 ```
-┌─ content/              ← 你写 Markdown 的地方
+┌─ content/              ← ✍️ 内容源：你写 Markdown 的地方
 │   ├─ notes/            ← 学习笔记（已分类）
 │   │   ├─ _index.md
 │   │   ├─ python/       ← Python 笔记
@@ -74,22 +74,19 @@
 │   ├─ airp/             ← AIRP 体验
 │   └─ .../              ← 可无限扩展的分区
 │
-├─ templates/
-│   └─ page.html
+├─ site/                 ← 🏗️ 站点骨架
+│   ├─ index.html        ←    首页
+│   ├─ templates/        ←    文章页模板（page.html）
+│   └─ assets/           ←    静态资源：style.css、头像、以后所有图片
 │
-├─ dist/                 ← 构建产物（自动生成）
-│   ├─ notes/
-│   │   ├─ index.html
-│   │   ├─ python/
-│   │   ├─ database/
-│   │   └─ linux/
-│   ├─ novels/
-│   └─ airp/
+├─ dist/                 ← 📦 构建产物 = 完整站点（不入 git，CI 自动生成部署）
+│   ├─ index.html
+│   ├─ assets/
+│   ├─ notes/ · novels/ · airp/
 │
-├─ index.html
-├─ style.css
-├─ build.mjs
-└─ README.md
+├─ build.mjs             ← 🔧 构建脚本
+├─ README.md · AGENTS.md
+└─ .github/workflows/    ← CI：push 后自动构建部署
 ```
 
 ---
@@ -253,8 +250,8 @@ mkdir content/diary
 # 编辑 build.mjs，在 SECTIONS 对象里加一条：
 # 'diary': { name:'日记', icon:'📔' },
 
-# 4. 更新首页导航
-# 打开 index.html，复制一个卡片改为新分区的链接
+# 4. 更新导航（两处）
+# site/index.html 首页导航 + site/templates/page.html 抽屉菜单，各加一条链接
 
 # 5. 构建
 node build.mjs
@@ -328,20 +325,24 @@ category: linux        # 用于在文章列表中自动分组
 
 - **颜色**：全局 CSS 变量定义在 `:root`，修改 `style.css` 前几行即可
 - **字体**：默认使用衬线体（Noto Serif SC / Georgia / SimSun），在 `style.css` 中修改 `body` 的 `font-family`
-- **头像**：当前使用 `avatar.jpeg`，替换图片后修改 `index.html` 中 `<img src="avatar.jpeg">` 的路径即可
+- **头像**：位于 `site/assets/avatar.jpeg`，直接替换同名文件即可
 - **花瓣粒子**：所有页面包含浮动花瓣粒子动画，由 `<div id="particles">` + JavaScript 生成，样式在 `style.css` 的 `.particle` 和 `@keyframes floatPetals` 中定义
 
 ---
 
 ## 部署方式
 
-本仓库关联 GitHub Pages，推送到 `main` 分支后自动部署。
+GitHub Actions（`.github/workflows/deploy.yml`）：push 到 `main` 后自动运行 `node build.mjs` 并将 `dist/` 部署到 GitHub Pages。
 
 ```bash
 git add .
 git commit -m "更新内容"
 git push origin main
+# 1-2 分钟后线上自动更新，无需本地构建
 ```
+
+- `dist/` 不入 git（.gitignore 已配置），本地 `node build.mjs` 仅用于预览
+- 线上 URL 与 dist/ 内部结构一致，如 `/notes/linux/vim.html`
 
 部署网址：`https://fujiko-purple.github.io/`
 
@@ -361,4 +362,4 @@ git push origin main
 
 ---
 
-*最后更新：2026-06-27*
+*最后更新：2026-07-26*

@@ -31,26 +31,20 @@
 
 ```
 /
-├── build.mjs          # 构建脚本：读取 content/ → 渲染 → 输出到 dist/
-├── index.html          # 首页（手动维护）
-├── style.css           # 全局样式
-├── templates/
-│   └── page.html       # 文章页 HTML 模板
-├── content/            # Markdown 源文件
-│   ├── _index.md       # 首页的 about 区域内容
-│   ├── notes/          # 学习笔记分区
-│   │   ├── _index.md
-│   │   ├── database/
-│   │   ├── linux/
-│   │   └── python/
+├── build.mjs           # 构建脚本：content/ + site/ → 渲染 → 输出完整站点到 dist/
+├── content/            # Markdown 源文件（写作只碰这里）
+│   ├── notes/          # 学习笔记分区（database/ linux/ python/）
 │   ├── novels/         # 小说创作分区
-│   │   └── _index.md
 │   └── airp/           # AIRP 体验分区
-│       └── _index.md
-├── dist/               # 构建产物（git 跟踪，用于 GitHub Pages）
-├── avatar.jpeg         # 头像
-├── .gitignore
-└── README.md
+├── site/               # 站点骨架
+│   ├── index.html      # 首页（手动维护）
+│   ├── templates/
+│   │   └── page.html   # 文章页 HTML 模板
+│   └── assets/         # style.css、avatar.jpeg 等静态资源
+├── dist/               # 构建产物 = 完整站点（不入 git，CI 生成并部署）
+├── .github/workflows/  # deploy.yml：push 后自动构建部署 Pages
+├── README.md · AGENTS.md
+└── .gitignore · .gitattributes
 ```
 
 ---
@@ -69,7 +63,7 @@ node build.mjs
 4. 注入 `templates/page.html` 模板
 5. 输出到 `dist/` 对应路径
 
-**部署方式**：push 到 main 后 GitHub Actions（`.github/workflows/deploy.yml`）自动构建并部署 Pages，只需提交 content/ 的修改即可。本地运行 `node build.mjs` 仅用于预览；`dist/` 目前仍在 git 中（保留本地预览能力），提交与否不影响线上结果。
+**部署方式**：push 到 main 后 GitHub Actions（`.github/workflows/deploy.yml`）自动构建 dist/ 并部署 Pages。`dist/` 不入 git；本地运行 `node build.mjs` 仅用于预览（每次全量重建，先清空再生成）。线上 URL 与 dist/ 结构一致（无 /dist/ 前缀），如 `/notes/linux/vim.html`。
 
 ---
 
@@ -117,7 +111,7 @@ node build.mjs
 
 1. **线上部署已由 GitHub Actions 自动完成**，只需提交 content/ 修改并推送；本地 `node build.mjs` 仅用于预览
 2. 所有新分区需要在 `content/` 下创建文件夹并包含 `_index.md`
-3. 首页导航链接在 `index.html` 中手动维护，新增分区后记得同步更新导航
+3. 新增分区要同步 3 处：`build.mjs` 的 `SECTIONS`、`site/index.html` 首页导航、`site/templates/page.html` 抽屉菜单
 4. 保持设计一致性：不要引入新的 CSS 框架或风格
 5. Markdown 解析器是自制的（`build.mjs` 中 `mdToHtml()`，基于行的状态机），支持：标题、围栏代码块、无序/有序列表（嵌套，2 空格一层）、表格、引用、分割线、图片/链接、粗斜体/行内代码。添加其他语法前先在解析器中扩展
 6. 换行符统一为 LF（`.gitattributes` 已配置），构建输出也是 LF，勿改动

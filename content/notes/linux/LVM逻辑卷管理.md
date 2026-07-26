@@ -24,8 +24,6 @@ yum -y install lvm2	#安装
 lsblk	#查看磁盘情况
 ```
 
-<img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251212170436455.png" alt="image-20251212170436455" style="zoom:50%;" />
-
 在设置中 添加->下一步->默认->大小设置->点击完成 硬盘添加成功
 
 ```shell

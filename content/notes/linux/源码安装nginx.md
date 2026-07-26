@@ -35,8 +35,6 @@ ip a s
 192.168.100.130	#访问IP
 ```
 
-![image-20251213235457950](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20251213235457950.png)
-
 ```shell
 /opt/nginx/sbin/nginx -t	#查看nginx配置文件是否成功 文件是否正常
 

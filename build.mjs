@@ -1,11 +1,12 @@
-import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync, rmSync, cpSync } from 'node:fs';
 import { join, dirname, basename } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const CONTENT = join(ROOT, 'content');
-const TEMPLATES = join(ROOT, 'templates');
-const DIST = join(ROOT, 'dist');
+const CONTENT = join(ROOT, 'content');   // Markdown 内容源
+const SITE = join(ROOT, 'site');         // 站点骨架：首页、模板、静态资源
+const TEMPLATES = join(SITE, 'templates');
+const DIST = join(ROOT, 'dist');         // 构建产物 = 完整站点（不入 git）
 
 // ============ Markdown 转 HTML（自制解析器，零依赖） ============
 // 支持的语法子集：
@@ -163,16 +164,25 @@ function build() {
   // 统一为 LF：保证本地（Windows）和 CI（Linux）构建产物字节级一致
   const tpl = readFileSync(join(TEMPLATES, 'page.html'), 'utf-8').replace(/\r\n/g, '\n');
 
+  // 每次全量重建：先清空 dist/，避免已删除的文章残留在线上
+  rmSync(DIST, { recursive: true, force: true });
+  mkdirSync(DIST, { recursive: true });
+
+  // 拷贝站点骨架：dist/ 自身就是完整可部署的站点
+  cpSync(join(SITE, 'index.html'), join(DIST, 'index.html'));
+  cpSync(join(SITE, 'assets'), join(DIST, 'assets'), { recursive: true });
+  console.log('  ✓ index.html + assets/（站点骨架）');
+
   for (const [dk, sec] of Object.entries(SECTIONS)) {
     const sdir = join(CONTENT, dk);
     const odir = join(DIST, dk);
     if (!existsSync(sdir)) continue;
 
-    // First pass: recursively process all .md files, collect articles
+    // 第一遍：递归渲染所有 .md；文章页在 dist 下第一层（如 notes/），深度为 1
     const allArticles = [];
-    processFiles(sdir, odir, 2, tpl, sec, dk, allArticles);
+    processFiles(sdir, odir, 1, tpl, sec, dk, allArticles);
 
-    // Second pass: inject article lists into index.html at each directory level
+    // 第二遍：向每一层目录的 index.html 注入文章列表
     injectArticleLists(sdir, odir, dk);
   }
   console.log('\n✨ Build complete!');
@@ -201,7 +211,7 @@ function processFiles(srcDir, outDir, depth, tpl, sec, dk, articles) {
         .replaceAll('{{DATE}}', pd)
         .replaceAll('{{CONTENT}}', bhtml)
         .replaceAll('{{SECTION_NAME}}', sec.name)
-        .replaceAll('{{SECTION_INDEX}}', rootDir + 'dist/' + dk + '/index.html')
+        .replaceAll('{{SECTION_INDEX}}', rootDir + dk + '/index.html')
         .replaceAll('{{ROOT}}', rootDir);
 
       writeFileSync(join(outDir, outName), pg, 'utf-8');

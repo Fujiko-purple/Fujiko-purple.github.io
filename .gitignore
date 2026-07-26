@@ -1,2 +1,4 @@
-﻿node_modules/
+node_modules/
 
+# 构建产物：CI 自动构建部署，本地仅作预览，不入 git
+dist/

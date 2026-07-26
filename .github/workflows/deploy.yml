@@ -1,10 +1,8 @@
 # ============ GitHub Pages 自动构建部署 ============
 # 触发：push 到 main（或手动触发）
-# 流程：node build.mjs 构建 → 组装站点目录 → 部署到 Pages
-# 效果：只需提交 content/ 的修改并推送，线上站点自动更新，
-#       不再依赖本地记得运行 node build.mjs 并提交 dist/
-# 注意：首次生效需要仓库 Settings → Pages → Source 为 "GitHub Actions"
-#       （下方 configure-pages 的 enablement 会尝试自动完成切换）
+# 流程：node build.mjs 构建出完整站点（dist/）→ 直接部署到 Pages
+# 效果：只需提交 content/ 或 site/ 的修改并推送，线上站点自动更新
+#       dist/ 不入 git，仅在 CI 和本地预览时生成
 
 name: Deploy to GitHub Pages
 
@@ -38,14 +36,6 @@ jobs:
       - name: 构建全站
         run: node build.mjs
 
-      # 组装线上目录，布局与仓库根一致，保证现有 URL 全部不变：
-      #   /index.html  /style.css  /avatar.jpeg  /dist/...
-      - name: 组装部署目录
-        run: |
-          mkdir -p _site
-          cp index.html style.css avatar.jpeg _site/
-          cp -r dist _site/dist
-
       - name: 配置 Pages
         uses: actions/configure-pages@v5
         with:
@@ -54,7 +44,7 @@ jobs:
       - name: 上传站点产物
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: dist
 
   deploy:
     needs: build
