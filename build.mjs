@@ -17,6 +17,64 @@ const DIST = join(ROOT, 'dist');         // 构建产物 = 完整站点（不入
 
 function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ============ 构建时代码高亮（零依赖） ============
+// 思路：注释/字符串先提取为占位符 → 其余文本转义后染关键字/数字 → 还原占位
+// 仅覆盖本站实际使用的语言；新语言在 LANGS 加词表即可
+const LANGS = {
+  java: {
+    kw: 'public private protected class interface enum static final void int long double float boolean char byte short new return if else for while do switch case break continue default try catch finally throw throws import package this super null true false extends implements instanceof abstract String'.split(' '),
+    line: '//', block: true,
+  },
+  python: {
+    kw: 'def class return if elif else for while in not and or is None True False import from as with try except finally raise lambda pass break continue global nonlocal yield assert del self print range len'.split(' '),
+    line: '#',
+  },
+  shell: {
+    kw: 'if then else elif fi for while until do done case esac function echo cd export local return exit source in read'.split(' '),
+    line: '#',
+  },
+  sql: {
+    kw: 'select from where insert into values update set delete create table database drop alter add primary key foreign references not null default index join left right inner on group by order having limit and or in like between is distinct union all as show use describe grant flush privileges identified'.split(' '),
+    line: '--', ci: true,
+  },
+};
+const LANG_ALIAS = { py:'python', sh:'shell', bash:'shell', zsh:'shell', mysql:'sql' };
+
+function highlightCode(raw, lang) {
+  const cfg = LANGS[LANG_ALIAS[lang] || lang];
+  if (!cfg) return esc(raw);
+
+  const slots = [];
+  const hold = (text, cls) => {
+    slots.push('<span class="' + cls + '">' + esc(text) + '</span>');
+    return '\u0000' + (slots.length - 1) + '\u0000';
+  };
+
+  // 注释与字符串合并为一个交替正则、单遍提取：谁在文本中先出现谁生效，
+  // 天然处理「注释里有引号 / 字符串里有 //」的相互包含（分两遍提取会产生占位符嵌套残留）
+  const parts = [];
+  if (cfg.block) parts.push('\\/\\*[\\s\\S]*?\\*\\/');
+  if (cfg.line === '//') parts.push('\\/\\/[^\\n]*');
+  else if (cfg.line === '#') parts.push('#[^\\n]*');
+  else if (cfg.line === '--') parts.push('--[^\\n]*');
+  parts.push('"(?:[^"\\\\\\n]|\\\\.)*"', "'(?:[^'\\\\\\n]|\\\\.)*'");
+  const extractRe = new RegExp(parts.join('|'), 'g');
+  let s = raw.replace(extractRe, m =>
+    hold(m, (m[0] === '"' || m[0] === "'") ? 'tok-s' : 'tok-c'));
+
+  const kwRe = new RegExp('\\b(' + cfg.kw.join('|') + ')\\b', cfg.ci ? 'gi' : 'g');
+  // 按占位符分段：只对普通代码段做转义+染色，避免破坏占位符里的数字
+  s = s.split(/(\u0000\d+\u0000)/).map(seg => {
+    if (/^\u0000\d+\u0000$/.test(seg)) return seg;
+    let t = esc(seg);
+    t = t.replace(kwRe, '<span class="tok-k">$1</span>');
+    t = t.replace(/\b\d+(?:\.\d+)?\b/g, '<span class="tok-n">$&</span>');
+    return t;
+  }).join('');
+
+  return s.replace(/\u0000(\d+)\u0000/g, (_, i) => slots[i]);
+}
+
 // 行内格式：先保护行内代码（内容转义，防止 < > 破坏页面），再处理图片/链接/粗斜体
 function inline(text) {
   const codes = [];
@@ -38,7 +96,7 @@ function mdToHtml(md) {
   // 第一步：提取围栏代码块为占位符，避免代码内容被当作 Markdown 解析
   const blocks = [];
   md = md.replace(/```(\w*)\n([\s\S]*?)\n?```/g, (_, lang, code) => {
-    blocks.push('<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + esc(code) + '</code></pre>');
+    blocks.push('<pre><code' + (lang ? ' class="language-' + lang + '"' : '') + '>' + highlightCode(code, lang.toLowerCase()) + '</code></pre>');
     return '\u0000B' + (blocks.length - 1) + '\u0000';
   });
 
