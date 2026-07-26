@@ -4,9 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Fujiko - 极简日系</title>
+<script>
+/* 主题初始化：在样式生效前设置，避免深色用户看到白屏闪烁 */
+(function(){
+  var t = localStorage.getItem('theme');
+  if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.dataset.theme = t;
+})();
+</script>
 <style>
+/* 色卡：与 assets/style.css 保持同名同值 */
+:root{
+  --bg:#fafaf8; --text:#3a3a3a; --text-strong:#2a2a2a; --text-soft:#555;
+  --faint:#aaa; --ghost:#ccc; --line:#eee; --line-strong:#ddd;
+  --accent:#ec4899; --panel:#f5f3f7;
+}
+:root[data-theme="dark"]{
+  --bg:#1b1a18; --text:#c9c5bd; --text-strong:#e8e4dc; --text-soft:#b0aca4;
+  --faint:#6f6b64; --ghost:#524f49; --line:#2e2c28; --line-strong:#3a3833;
+  --accent:#f472b6; --panel:#242220;
+}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:#fafaf8;color:#3a3a3a;min-height:100vh;display:flex;flex-direction:column;align-items:center;position:relative;overflow-x:hidden}
+body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;position:relative;overflow-x:hidden;transition:background 0.3s,color 0.3s}
 
 .particle{position:fixed;pointer-events:none;border-radius:50%;z-index:0;opacity:0}
 @keyframes floatPetals{
@@ -21,22 +40,25 @@ body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:#fafaf8;col
 .header .avatar{width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 20px;transition:transform 0.3s ease;cursor:pointer}
 .header .avatar:hover{transform:scale(1.12)}
 .header .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.header h1{font-size:2rem;font-weight:400;letter-spacing:8px;margin-bottom:8px;color:#2a2a2a}
-.header .subtitle{font-size:0.82rem;color:#aaa;letter-spacing:4px}
+.header h1{font-size:2rem;font-weight:400;letter-spacing:8px;margin-bottom:8px;color:var(--text-strong)}
+.header .subtitle{font-size:0.82rem;color:var(--faint);letter-spacing:4px}
 
 .nav-links{display:flex;flex-direction:column;margin-bottom:60px}
-.nav-links a{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;text-decoration:none;color:#555;font-size:0.95rem;border-bottom:1px solid #eee;transition:all 0.2s ease}
-.nav-links a:first-child{border-top:1px solid #eee}
+.nav-links a{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;text-decoration:none;color:var(--text-soft);font-size:0.95rem;border-bottom:1px solid var(--line);transition:all 0.2s ease}
+.nav-links a:first-child{border-top:1px solid var(--line)}
 .nav-links a:hover{padding-left:20px}
-.nav-links .arrow{color:#ccc;font-size:0.75rem;transition:transform 0.2s}
-.nav-links a:hover .arrow{color:#ec4899;transform:translateX(3px)}
-.nav-links .desc{font-size:0.75rem;color:#ccc;margin-left:auto;margin-right:12px}
+.nav-links .arrow{color:var(--ghost);font-size:0.75rem;transition:transform 0.2s}
+.nav-links a:hover .arrow{color:var(--accent);transform:translateX(3px)}
+.nav-links .desc{font-size:0.75rem;color:var(--ghost);margin-left:auto;margin-right:12px}
 
-.divider{text-align:center;margin:0 0 40px;color:#ddd;font-size:0.8rem;letter-spacing:4px}
-.footer{text-align:center;padding:24px;color:#ccc;font-size:0.75rem;letter-spacing:2px}
+.divider{text-align:center;margin:0 0 40px;color:var(--line-strong);font-size:0.8rem;letter-spacing:4px}
+.footer{text-align:center;padding:24px;color:var(--ghost);font-size:0.75rem;letter-spacing:2px}
+.theme-btn{position:fixed;top:16px;right:16px;z-index:10;background:none;border:none;font-size:1.15rem;cursor:pointer;padding:6px 8px;border-radius:6px;transition:background 0.15s}
+.theme-btn:hover{background:var(--panel)}
 </style>
 </head>
 <body>
+<button class="theme-btn" id="themeToggle" aria-label="切换深浅色">🌙</button>
 <div id="particles"></div>
 
 <div class="container">
@@ -87,6 +109,19 @@ body{font-family:'Noto Serif SC','Georgia','SimSun',serif;background:#fafaf8;col
     if (isBig) p.style.opacity = '0.7';
     c.appendChild(p);
   }
+})();
+/* 深浅色手动切换：点击后记住选择（优先于系统设置） */
+(function(){
+  var b = document.getElementById('themeToggle');
+  if (!b) return;
+  function icon(){ b.textContent = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙'; }
+  icon();
+  b.addEventListener('click', function(){
+    var next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('theme', next);
+    icon();
+  });
 })();
 </script>
 </body>
