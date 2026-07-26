@@ -94,7 +94,12 @@ function mdToHtml(md) {
       }
       const top = stack[stack.length - 1];
       if (top.liOpen) out.push('</li>');
-      out.push('<li>' + inline(lm[4]));
+      // 任务列表：- [x] / - [ ] 渲染为只读勾选框
+      const task = lm[4].match(/^\[([ x])\] (.*)$/);
+      const liHtml = task
+        ? '<input type="checkbox"' + (task[1] === 'x' ? ' checked' : '') + ' disabled> ' + inline(task[2])
+        : inline(lm[4]);
+      out.push('<li>' + liHtml);
       top.liOpen = true;
       i++;
       continue;
@@ -157,7 +162,7 @@ const SECTIONS = {
   'novels': { name:'小说创作', icon:'✍️' },
   'airp':   { name:'AIRP 体验', icon:'🎭' },
 };
-const CAT_NAMES = { 'python':'Python', 'database':'数据库', 'linux':'Linux', '':'所有笔记' };
+const CAT_NAMES = { 'python':'Python', 'database':'数据库', 'linux':'Linux', 'algorithm':'算法', '':'所有笔记' };
 
 function build() {
   console.log('Building site...\n');
