@@ -334,6 +334,10 @@ sb.append('a');        // 追加一个字符
 sb.append("hello");    // 追加一个字符串
 sb.reverse();          // 翻转整个内容
 sb.toString();         // 转成 String 返回
+sb.deleteCharAt(i);    // 删除下标 i 的字符（i=length()-1 删末尾）
+sb.length();           // 当前字符个数
+
+// 场景：回溯撤销 —— sb.deleteCharAt(sb.length()-1) 对应 path.remove(末位)
 
 // 场景：循环里频繁拼接 → 比 String + 快得多
 // 场景：栈 pop 出来拼字符串，顺序是反的 → reverse() 纠正
@@ -464,5 +468,18 @@ result.add(node.val);
 ```
 
 ---
+
+## 33. 字符数字转 int（char - '0'）
+
+```java
+char c = '3';
+int num = c - '0';       // → 3
+
+// 原理：字符按 ASCII 编码，'0'=48，'1'=49...
+// '3' - '0' = 51 - 48 = 3
+
+// 场景：digits.charAt(index) - '0' 把数字字符转成数字，
+//       用来当下标：phone['2' - '0'] = phone[2] = "abc"
+```
 
 > 新增语法随时追加到文末
